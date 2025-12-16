@@ -22,4 +22,5 @@ frontend/npm-debug.log*
 
 ## backend
 
-.env
+backend/.env
+backend/__pycache__
