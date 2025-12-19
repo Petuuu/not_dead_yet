@@ -6,7 +6,7 @@ class Courses(Base):
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
+    name = Column(String, unique=True)
 
 
 class Deadlines(Base):
