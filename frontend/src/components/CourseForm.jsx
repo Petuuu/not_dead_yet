@@ -6,7 +6,7 @@ export default function CourseForm({ addCourse }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (courseName && credits) {
+        if (courseName && credits > 0) {
             addCourse(courseName, credits);
             setCourseName("");
             setCredits(0)
@@ -14,7 +14,7 @@ export default function CourseForm({ addCourse }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b border-teal-500 m-10 py-2 w-[38vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b border-teal-500 m-10 py-2 w-[33vw]">
             <input
                 type="text"
                 value={courseName}

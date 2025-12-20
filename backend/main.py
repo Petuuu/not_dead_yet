@@ -50,11 +50,9 @@ def check_404(to_check, item: str):
 db_dependency = Annotated[Session, Depends(get_db)]
 
 
-@app.get("/courses/")
-async def get_courses(db: db_dependency):
-    result = db.query(Courses).all()
-    check_404(result, "courses")
-    return result
+############
+# COURSES
+############
 
 
 @app.post("/courses/")
@@ -62,6 +60,13 @@ async def add_course(course: CourseBase, db: db_dependency):
     db_course = Courses(name=course.name, credits=course.credits)
     db.add(db_course)
     db.commit()
+
+
+@app.get("/courses/")
+async def get_courses(db: db_dependency):
+    result = db.query(Courses).all()
+    check_404(result, "courses")
+    return result
 
 
 @app.put("/courses/{course_id}")
@@ -79,3 +84,13 @@ async def update_course(course_id: int, new: CourseBase, db: db_dependency):
 async def delete_course(course_id: int, db: db_dependency):
     db.query(Courses).filter(Courses.id == course_id).delete()
     db.commit()
+
+
+############
+# DEADLINES
+############
+
+
+@app.post("/deadlines/")
+async def add_deadline(deadline: DeadlineBase, db: db_dependency):
+    pass
