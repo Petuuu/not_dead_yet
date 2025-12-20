@@ -19,6 +19,7 @@ app.add_middleware(
 
 class CourseBase(BaseModel):
     name: str
+    credits: int
 
 
 class DeadlineBase(BaseModel):
@@ -58,7 +59,7 @@ async def get_courses(db: db_dependency):
 
 @app.post("/courses/")
 async def add_course(course: CourseBase, db: db_dependency):
-    db_course = Courses(name=course.name)
+    db_course = Courses(name=course.name, credits=course.credits)
     db.add(db_course)
     db.commit()
 

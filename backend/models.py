@@ -7,6 +7,7 @@ class Courses(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True)
+    credits = Column(Integer)
 
 
 class Deadlines(Base):
