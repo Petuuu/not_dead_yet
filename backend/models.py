@@ -2,11 +2,19 @@ from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
 from db import Base
 
 
+class Users(Base):
+    __tablename__ = "Users"
+
+    id = Column(Integer, primary_key=True, index=True)
+    uname = Column(String, unique=True)
+    password = Column(String)
+
+
 class Courses(Base):
     __tablename__ = "courses"
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True)
+    name = Column(String)
     credits = Column(Integer)
 
 

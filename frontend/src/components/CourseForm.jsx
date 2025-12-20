@@ -14,13 +14,13 @@ export default function CourseForm({ addCourse }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b border-teal-500 m-10 py-2 w-[33vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b border-teal-500 m-20 py-2 w-[24vw]">
             <input
                 type="text"
                 value={courseName}
                 onChange={e => setCourseName(e.target.value)}
                 placeholder="Enter course name..."
-                className="w-[18vw] text-gray-700 leading-tight focus:outline-none"
+                className="w-[10vw] text-gray-700 leading-tight focus:outline-none"
             />
             <input
                 type="number"

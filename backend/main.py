@@ -17,6 +17,11 @@ app.add_middleware(
 )
 
 
+class Users(BaseModel):
+    name: str
+    password: str
+
+
 class CourseBase(BaseModel):
     name: str
     credits: int
@@ -92,5 +97,25 @@ async def delete_course(course_id: int, db: db_dependency):
 
 
 @app.post("/deadlines/")
-async def add_deadline(deadline: DeadlineBase, db: db_dependency):
+async def add_deadline(course_id: int, deadline: DeadlineBase, db: db_dependency):
+    pass
+
+
+@app.get("/deadlines/{course_id}")
+async def get_deadlines(course_id: int, db: db_dependency):
+    pass
+
+
+############
+# TASKS
+############
+
+
+@app.post("/tasks/")
+async def add_task(course_id: int, deadline_id: int, task: TaskBase, db: db_dependency):
+    pass
+
+
+@app.get("/tasks/{course_id}/{deadline_id}")
+async def get_tasks(course_id: int, deadline_id: int, db: db_dependency):
     pass
