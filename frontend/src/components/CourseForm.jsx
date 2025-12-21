@@ -14,7 +14,7 @@ export default function CourseForm({ addCourse }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b border-teal-500 m-20 py-2 w-[24vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-20 py-2 w-[20vw]">
             <input
                 type="text"
                 value={courseName}

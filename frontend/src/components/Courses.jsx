@@ -63,12 +63,7 @@ export default function Courses() {
 
     return (
         <>
-            {Object.entries(deadlines).map(([courseId, deadlineList]) => (
-                <p key={courseId}> Course: {courseId}, deadlines: {deadlineList.map(dls => (
-                    <p> {dls.name}, {dls.due} </p>
-                ))}</p>
-            ))}
-            <div className="flex flex-row justify-start gap-20 m-20">
+            <div className="flex flex-row justify-start items-start gap-20 m-20">
                 {courses.map(course => (
                     <CourseCard course={course} deadlines={deadlines[course.id] || []} tasks={tasks[course.id] || []} />
                 ))}
