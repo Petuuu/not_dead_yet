@@ -7,14 +7,25 @@ import TaskForm from "./TaskForm";
 
 export default function Courses() {
     const [courses, setCourses] = useState([]);
-    const [deadlines, setDeadlines] = useState([]);
-    const [tasks, setTasks] = useState([]);
+    const [deadlines, setDeadlines] = useState({});
+    const [tasks, setTasks] = useState({});
 
 
-    async function fetchCourses() {
+    async function fetchAll() {
         try {
             const res = await api.get("/courses/");
             setCourses(res.data);
+
+            for (const course of res.data) {
+                try {
+                    const dlRes = await api.get(`/deadlines/${course.id}`);
+                    setDeadlines(prev => ({ ...prev, [course.id]: dlRes.data }));
+                }
+                catch (e) {
+                    console.error(`Error fetching deadlines for course ${course.id}:`, e);
+                    setDeadlines(prev => ({ ...prev, [course.id]: [] }));
+                }
+            }
         }
         catch (e) {
             console.error("Error fetching courses:", e);
@@ -23,24 +34,23 @@ export default function Courses() {
 
     async function addCourse(courseName, credits) {
         try {
-            api.post("/courses/", { name: courseName, credits: credits });
-            fetchCourses();
+            await api.post("/courses/", { name: courseName, credits: credits });
+            fetchAll();
         }
         catch (e) {
             console.error("Error adding course:", e)
         }
     };
 
-    async function fetchDeadlines(courseId) {
-        // code
-    };
 
     async function addDeadline(courseId, name, due_date) {
-        // code
-    };
-
-    async function fetchTasks(courseId, deadlineId) {
-        // code
+        try {
+            await api.post("/deadlines/", { course: courseId, name: name, due: due_date });
+            fetchAll();
+        }
+        catch (e) {
+            console.error("Error adding deadline:", e);
+        }
     };
 
     async function addTask(courseId, deadlineId, todo) {
@@ -48,14 +58,19 @@ export default function Courses() {
     };
 
     useEffect(() => {
-        fetchCourses();
+        fetchAll();
     }, []);
 
     return (
         <>
+            {Object.entries(deadlines).map(([courseId, deadlineList]) => (
+                <p key={courseId}> Course: {courseId}, deadlines: {deadlineList.map(dls => (
+                    <p> {dls.name}, {dls.due} </p>
+                ))}</p>
+            ))}
             <div className="flex flex-row justify-start gap-20 m-20">
-                {courses.map((course) => (
-                    <CourseCard course={course} fetchDeadlines={fetchDeadlines} fetchCourses={fetchCourses} />
+                {courses.map(course => (
+                    <CourseCard course={course} deadlines={deadlines[course.id] || []} tasks={tasks[course.id] || []} />
                 ))}
             </div>
 

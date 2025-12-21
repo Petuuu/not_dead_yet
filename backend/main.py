@@ -97,13 +97,45 @@ async def delete_course(course_id: int, db: db_dependency):
 
 
 @app.post("/deadlines/")
-async def add_deadline(course_id: int, deadline: DeadlineBase, db: db_dependency):
-    pass
+async def add_deadline(dl: DeadlineBase, db: db_dependency):
+    db_deadline = Deadlines(course=dl.course, name=dl.name, due=dl.due)
+    db.add(db_deadline)
+    db.commit()
+
+
+@app.get("/deadlines/")
+async def get_deadlines(db: db_dependency):
+    result = db.query(Deadlines).all()
+    check_404(result, "deadlines")
+
+    form = []
+    for r in result:
+        dict = {
+            "name": r.name,
+            "due": f"{r.due.day}/{r.due.month}/{r.due.year}",
+            "id": r.id,
+            "course": r.course,
+        }
+        form.append(dict)
+
+    return form
 
 
 @app.get("/deadlines/{course_id}")
 async def get_deadlines(course_id: int, db: db_dependency):
-    pass
+    result = db.query(Deadlines).filter(Deadlines.course == course_id).all()
+    check_404(result, "deadlines")
+
+    form = []
+    for r in result:
+        dict = {
+            "name": r.name,
+            "due": f"{r.due.day}/{r.due.month}/{r.due.year}",
+            "id": r.id,
+        }
+        form.append(dict)
+
+    return form
 
 
 ############
