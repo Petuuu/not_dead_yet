@@ -8,6 +8,7 @@ import TaskForm from "./TaskForm";
 export default function Courses() {
     const [courses, setCourses] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
+    const [tasks, setTasks] = useState([]);
 
 
     async function fetchCourses() {
@@ -18,7 +19,7 @@ export default function Courses() {
         catch (e) {
             console.error("Error fetching courses:", e);
         }
-    }
+    };
 
     async function addCourse(courseName, credits) {
         try {
@@ -28,27 +29,27 @@ export default function Courses() {
         catch (e) {
             console.error("Error adding course:", e)
         }
-    }
+    };
 
-    async function fetchDeadlines(courseName) {
+    async function fetchDeadlines(courseId) {
         // code
-    }
+    };
 
-    async function addDeadline(courseName, name, due_date) {
+    async function addDeadline(courseId, name, due_date) {
         // code
-    }
+    };
 
-    async function fetchTasks(courseName, deadlineName) {
+    async function fetchTasks(courseId, deadlineId) {
         // code
-    }
+    };
 
-    async function addTask(courseName, deadlineName, todo) {
+    async function addTask(courseId, deadlineId, todo) {
         // code
-    }
+    };
 
     useEffect(() => {
         fetchCourses();
-    }, [])
+    }, []);
 
     return (
         <>
@@ -64,5 +65,5 @@ export default function Courses() {
                 <TaskForm addTask={addTask} courses={courses} deadlines={deadlines} />
             </div>
         </>
-    )
+    );
 }

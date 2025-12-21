@@ -1,3 +1,5 @@
 export default function TaskForm({ addTask }) {
-    return
+    return (
+        <div>Task Form</div>
+    );
 }

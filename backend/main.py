@@ -18,7 +18,7 @@ app.add_middleware(
 
 
 class Users(BaseModel):
-    name: str
+    uname: str
     password: str
 
 
