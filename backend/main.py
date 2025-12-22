@@ -104,17 +104,23 @@ async def add_deadline(dl: DeadlineBase, db: db_dependency):
 
 
 @app.get("/deadlines/")
-async def get_deadlines(db: db_dependency):
+async def get_all_deadlines(db: db_dependency):
     result = db.query(Deadlines).all()
     check_404(result, "deadlines")
+    courses = db.query(Courses).all()
+
+    form_courses = {}
+    for c in courses:
+        form_courses[c.id] = c.name
 
     form = []
     for r in result:
+
         dict = {
             "name": r.name,
             "due": f"{r.due.day}/{r.due.month}/{r.due.year}",
             "id": r.id,
-            "course": r.course,
+            "course": form_courses[r.course],
         }
         form.append(dict)
 
@@ -136,6 +142,11 @@ async def get_deadlines(course_id: int, db: db_dependency):
         form.append(dict)
 
     return form
+
+
+@app.put("/deadlines/{dl_id}")
+async def update_deadline(dl_id: int, db: db_dependency):
+    pass
 
 
 ############

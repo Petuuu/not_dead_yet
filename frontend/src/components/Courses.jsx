@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import api from "../api";
 import CourseCard from "./CourseCard";
-import CourseForm from "./CourseForm";
-import DeadlineForm from "./DeadlineForm";
-import TaskForm from "./TaskForm";
+import CourseForm from "./forms/CourseForm";
+import DeadlineForm from "./forms/DeadlineForm";
+import TaskForm from "./forms/TaskForm";
 
 export default function Courses() {
     const [courses, setCourses] = useState([]);

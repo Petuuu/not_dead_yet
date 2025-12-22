@@ -1,8 +1,6 @@
 import { useState } from "react";
 
-export default function DeadlineSlides({ deadlines }) {
-    const [slide, setSlide] = useState(0);
-
+export default function DeadlineSlides({ deadlines, slide, setSlide }) {
     function prevSlide() {
         setSlide((prev => prev == 0 ? 0 : prev - 1));
     };
@@ -13,9 +11,9 @@ export default function DeadlineSlides({ deadlines }) {
 
     return (
         <div className="relative">
-            <div className="w-full h-[8vw] flex flex-col items-center justify-center bg-slate-400 rounded">
+            <div className="w-full h-[6vw] flex flex-col items-center justify-center bg-slate-400 rounded">
                 <h1 className="text-lg font-bold"> {deadlines[slide].name} </h1>
-                <p> {deadlines[slide].due} </p>
+                <p className="text-sm"> Deadline {slide + 1} of {deadlines.length} </p>
             </div>
 
             <button
