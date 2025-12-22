@@ -1,5 +1,4 @@
-from db import engine, Base
-from models import Courses, Deadlines, Tasks
+from db import Base, engine
 
 # Drop all tables
 Base.metadata.drop_all(bind=engine)
