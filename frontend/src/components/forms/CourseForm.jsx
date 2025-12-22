@@ -14,7 +14,7 @@ export default function CourseForm({ addCourse }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-20 py-2 w-[20vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[20vw]">
             <input
                 type="text"
                 value={courseName}
@@ -31,7 +31,7 @@ export default function CourseForm({ addCourse }) {
                     className="bg-inherit w-[4vw] placeholder-stone-600 leading-tight focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]"
                 />
 
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex flex-col mr-3">
+                <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col mr-[0.8vw]">
                     <button
                         type="button"
                         onClick={() => setCredits(c => c + 1)}
@@ -50,7 +50,7 @@ export default function CourseForm({ addCourse }) {
             </div>
 
 
-            <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-4 text-white py-1 px-2 rounded">
+            <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-[0.3vw] text-white py-[0.25vw] px-[0.4vw] rounded">
                 Add course
             </button>
         </form>);

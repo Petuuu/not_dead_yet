@@ -16,14 +16,14 @@ export default function DeadlineSlides({ deadlines, slide, setSlide }) {
 
             <button
                 onClick={prevSlide}
-                className="absolute size-[2.5vw] left-4 top-1/2 -translate-y-1/2 bg-slate-500 text-slate-100 p-2 rounded-full"
+                className="absolute size-[2.5vw] left-[0.8vw] top-1/2 -translate-y-1/2 bg-slate-500 text-slate-100 rounded-full"
             >
                 &#8592;
             </button>
 
             <button
                 onClick={nextSlide}
-                className="absolute size-[2.5vw] right-4 top-1/2 -translate-y-1/2 bg-slate-500 text-slate-100 p-2 rounded-full"
+                className="absolute size-[2.5vw] right-[0.8vw] top-1/2 -translate-y-1/2 bg-slate-500 text-slate-100 rounded-full"
             >
                 &#8594;
             </button>

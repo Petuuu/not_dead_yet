@@ -63,7 +63,7 @@ export default function Courses() {
 
     return (
         <>
-            <div className="grid grid-cols-4 gap-y-[4vw] items-start m-20">
+            <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
                 {courses.map(course => (
                     <CourseCard course={course} deadlines={deadlines[course.id] || []} tasks={tasks[course.id] || []} />
                 ))}
