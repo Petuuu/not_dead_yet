@@ -69,9 +69,9 @@ async def add_course(course: CourseBase, db: db_dependency):
 
 @app.get("/courses/")
 async def get_courses(db: db_dependency):
-    result = db.query(Courses).all()
-    check_404(result, "courses")
-    return result
+    courses = db.query(Courses).order_by(Courses.id).all()
+    check_404(courses, "courses")
+    return courses
 
 
 @app.put("/courses/{course_id}")
@@ -105,22 +105,22 @@ async def add_deadline(dl: DeadlineBase, db: db_dependency):
 
 @app.get("/deadlines/")
 async def get_all_deadlines(db: db_dependency):
-    result = db.query(Deadlines).all()
-    check_404(result, "deadlines")
+    dls = db.query(Deadlines).order_by(Deadlines.id).all()
+    check_404(dls, "deadlines")
     courses = db.query(Courses).all()
+    check_404(courses, "courses")
 
     form_courses = {}
     for c in courses:
         form_courses[c.id] = c.name
 
     form = []
-    for r in result:
-
+    for d in dls:
         dict = {
-            "name": r.name,
-            "due": f"{r.due.day}/{r.due.month}/{r.due.year}",
-            "id": r.id,
-            "course": form_courses[r.course],
+            "id": d.id,
+            "course": form_courses[d.course],
+            "name": d.name,
+            "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
         }
         form.append(dict)
 
@@ -129,24 +129,42 @@ async def get_all_deadlines(db: db_dependency):
 
 @app.get("/deadlines/{course_id}")
 async def get_deadlines(course_id: int, db: db_dependency):
-    result = db.query(Deadlines).filter(Deadlines.course == course_id).all()
-    check_404(result, "deadlines")
+    dls = (
+        db.query(Deadlines)
+        .order_by(Deadlines.id)
+        .filter(Deadlines.course == course_id)
+        .all()
+    )
+    check_404(dls, "deadlines")
 
     form = []
-    for r in result:
-        dict = {
-            "name": r.name,
-            "due": f"{r.due.day}/{r.due.month}/{r.due.year}",
-            "id": r.id,
-        }
-        form.append(dict)
+    for d in dls:
+        form.append(
+            {
+                "id": d.id,
+                "name": d.name,
+                "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
+            }
+        )
 
     return form
 
 
 @app.put("/deadlines/{dl_id}")
-async def update_deadline(dl_id: int, db: db_dependency):
-    pass
+async def update_deadline(dl_id: int, new: DeadlineBase, db: db_dependency):
+    prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
+    check_404(prev, "deadline")
+
+    for key, value in new.model_dump().items():
+        setattr(prev, key, value)
+
+    db.commit()
+
+
+@app.delete("/deadlines/{dl_id}")
+async def delete_deadlines(dl_id: int, db: db_dependency):
+    db.query(Deadlines).filter(Deadlines.id == dl_id).delete()
+    db.commit()
 
 
 ############
@@ -155,10 +173,57 @@ async def update_deadline(dl_id: int, db: db_dependency):
 
 
 @app.post("/tasks/")
-async def add_task(course_id: int, deadline_id: int, task: TaskBase, db: db_dependency):
-    pass
+async def add_task(task: TaskBase, db: db_dependency):
+    db_task = Tasks(course=task.course, deadline=task.deadline, todo=task.todo)
+    db.add(db_task)
+    db.commit()
 
 
-@app.get("/tasks/{course_id}/{deadline_id}")
-async def get_tasks(course_id: int, deadline_id: int, db: db_dependency):
-    pass
+@app.get("/tasks/")
+async def get_all_tasks(db: db_dependency):
+    tasks = db.query(Tasks).order_by(Tasks.id).all()
+    check_404(tasks, "tasks")
+    dls = db.query(Deadlines).all()
+    check_404(dls, "deadlines")
+    courses = db.query(Courses).all()
+    check_404(courses, "courses")
+
+    form_dls = {}
+    for d in dls:
+        form_dls[d.id] = d.name
+
+    form_courses = {}
+    for c in courses:
+        form_courses[c.id] = c.name
+
+    form = {}
+    for t in tasks:
+        form.append(
+            {
+                "id": t.id,
+                "course": form_courses[t.course],
+                "deadline": form_dls[t.deadline],
+                "todo": t.todo,
+            }
+        )
+
+    return form
+
+
+@app.get("/tasks/{course_id}/{dl_id}")
+async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
+    tasks = (
+        db.query(Tasks)
+        .order_by(Tasks.id)
+        .filter(Tasks.course == course_id, Tasks.deadline == dl_id)
+        .all()
+    )
+    check_404(tasks, "tasks")
+    dls = (
+        db.query(Deadlines)
+        .filter(Deadlines.course == course_id, Deadlines.id == dl_id)
+        .all()
+    )
+    check_404(dls, "deadlines")
+    courses = db.query(Courses).filter(Courses.id == course_id).all()
+    check_404(courses, "courses")
