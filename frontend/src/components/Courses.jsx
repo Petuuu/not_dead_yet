@@ -63,7 +63,7 @@ export default function Courses() {
 
     return (
         <>
-            <div className="flex flex-row justify-start items-start gap-20 m-20">
+            <div className="grid grid-cols-4 gap-y-[4vw] items-start m-20">
                 {courses.map(course => (
                     <CourseCard course={course} deadlines={deadlines[course.id] || []} tasks={tasks[course.id] || []} />
                 ))}
