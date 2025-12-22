@@ -1,12 +1,10 @@
-import { useState } from "react";
-
 export default function DeadlineSlides({ deadlines, slide, setSlide }) {
     function prevSlide() {
-        setSlide((prev => prev == 0 ? 0 : prev - 1));
+        setSlide((prev => prev === 0 ? 0 : prev - 1));
     };
 
     function nextSlide() {
-        setSlide((prev => prev == deadlines.length - 1 ? deadlines.length - 1 : prev + 1));
+        setSlide((prev => prev === deadlines.length - 1 ? deadlines.length - 1 : prev + 1));
     };
 
     return (
