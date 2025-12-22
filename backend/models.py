@@ -22,7 +22,7 @@ class Deadlines(Base):
     __tablename__ = "deadlines"
 
     id = Column(Integer, primary_key=True, index=True)
-    course = Column(Integer, ForeignKey("courses.id"))
+    course = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     name = Column(String)
     due = Column(DateTime)
 
@@ -31,6 +31,6 @@ class Tasks(Base):
     __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True)
-    course = Column(Integer, ForeignKey("courses.id"))
-    deadline = Column(Integer, ForeignKey("deadlines.id"))
+    course = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
+    deadline = Column(Integer, ForeignKey("deadlines.id", ondelete="CASCADE"))
     todo = Column(String)

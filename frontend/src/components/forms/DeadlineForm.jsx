@@ -9,7 +9,6 @@ export default function DeadlineForm({ addDeadline, courses }) {
         e.preventDefault();
         if (courseId > 0 && deadlineName && dueDate) {
             addDeadline(courseId, deadlineName, dueDate);
-            setCourseId(0);
             setDeadlineName("");
             setDueDate("");
         }
