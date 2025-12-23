@@ -37,6 +37,7 @@ class TaskBase(BaseModel):
     course: int
     deadline: int
     todo: str
+    checked: bool = False
 
 
 def get_db():
@@ -160,7 +161,12 @@ async def delete_deadlines(dl_id: int, db: db_dependency):
 
 @app.post("/tasks/")
 async def add_task(task: TaskBase, db: db_dependency):
-    db_task = Tasks(course=task.course, deadline=task.deadline, todo=task.todo)
+    db_task = Tasks(
+        course=task.course,
+        deadline=task.deadline,
+        todo=task.todo,
+        checked=task.checked,
+    )
     db.add(db_task)
     db.commit()
 
@@ -173,6 +179,7 @@ async def get_all_tasks(db: db_dependency):
             Courses.name.label("course"),
             Deadlines.name.label("deadline"),
             Tasks.todo,
+            Tasks.checked,
         )
         .join(Courses, Tasks.course == Courses.id)
         .join(Deadlines, Tasks.deadline == Deadlines.id)
@@ -185,6 +192,7 @@ async def get_all_tasks(db: db_dependency):
             "course": t.course,
             "deadline": t.deadline,
             "todo": t.todo,
+            "checked": t.checked,
         }
         for t in tasks
     ] or "No tasks found"
@@ -197,6 +205,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
             Tasks.id,
             Deadlines.name.label("deadline"),
             Tasks.todo,
+            Tasks.checked,
         )
         .join(Deadlines, Tasks.deadline == Deadlines.id)
         .filter(Tasks.course == course_id)
@@ -208,6 +217,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
             "id": t.id,
             "deadline": t.deadline,
             "todo": t.todo,
+            "checked": t.checked,
         }
         for t in tasks
     ] or "No tasks found"
@@ -216,7 +226,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
 @app.get("/tasks/{course_id}/{dl_id}")
 async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
     tasks = (
-        db.query(Tasks.id, Tasks.todo)
+        db.query(Tasks.id, Tasks.todo, Tasks.checked)
         .filter(Tasks.course == course_id, Tasks.deadline == dl_id)
         .all()
     )
@@ -225,6 +235,14 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
         {
             "id": t.id,
             "todo": t.todo,
+            "checked": t.checked,
         }
         for t in tasks
     ] or "No tasks found"
+
+
+@app.put("/tasks/{task_id}")
+async def update_task(task_id: int, checked: bool, db: db_dependency):
+    prev = db.query(Tasks).filter(Tasks.id == task_id).first()
+    prev.checked = checked
+    db.commit()

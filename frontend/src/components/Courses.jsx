@@ -68,7 +68,7 @@ export default function Courses() {
 
     async function updateTask(taskId, checked) {
         try {
-            await api.put(`/tasks/${taskId}`, { checked });
+            await api.put(`/tasks/${taskId}`, null, { params: { checked } });
             fetchAll();
         }
         catch (e) {
@@ -86,8 +86,8 @@ export default function Courses() {
                 {courses.map(course => (
                     <CourseCard
                         course={course}
-                        deadlines={deadlines[course.id]}
-                        tasks={tasks[course.id]}
+                        deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
+                        tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
                         setTasks={setTasks}
                         updateTask={updateTask}
                     />

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime, Boolean
 from db import Base
 
 
@@ -34,3 +34,4 @@ class Tasks(Base):
     course = Column(Integer, ForeignKey("courses.id", ondelete="CASCADE"))
     deadline = Column(Integer, ForeignKey("deadlines.id", ondelete="CASCADE"))
     todo = Column(String)
+    checked = Column(Boolean, default=False)
