@@ -190,6 +190,29 @@ async def get_all_tasks(db: db_dependency):
     ] or "No tasks found"
 
 
+@app.get("/tasks/{course_id}")
+async def get_course_tasks(course_id: int, db: db_dependency):
+    tasks = (
+        db.query(
+            Tasks.id,
+            Deadlines.name.label("deadline"),
+            Tasks.todo,
+        )
+        .join(Deadlines, Tasks.deadline == Deadlines.id)
+        .filter(Tasks.course == course_id)
+        .all()
+    )
+
+    return [
+        {
+            "id": t.id,
+            "deadline": t.deadline,
+            "todo": t.todo,
+        }
+        for t in tasks
+    ] or "No tasks found"
+
+
 @app.get("/tasks/{course_id}/{dl_id}")
 async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
     tasks = (
@@ -201,8 +224,6 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
     return [
         {
             "id": t.id,
-            "course": t.course,
-            "deadline": t.deadline,
             "todo": t.todo,
         }
         for t in tasks
