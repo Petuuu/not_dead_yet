@@ -20,7 +20,7 @@ Create a database and add its URL to `.env` file in the `backend` directory in t
 PostgreSQL:
 
 ```python
-URL_DATABASE="postgresql://user:password@localhost:post/database"
+URL_DATABASE="postgresql://user:password@localhost:port/database"
 ```
 
 SQLite:
