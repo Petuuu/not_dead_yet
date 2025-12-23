@@ -17,7 +17,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
         <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[40vw]">
             <select
                 value={courseId}
-                onChange={e => setCourseId(Number(e.target.value))}
+                onChange={e => setCourseId(+e.target.value)}
                 className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 leading-tight focus:outline-none"
             >
 
@@ -31,7 +31,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
 
             <select
                 value={deadlineId}
-                onChange={e => setDeadlineId(Number(e.target.value))}
+                onChange={e => setDeadlineId(+e.target.value)}
                 className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 leading-tight focus:outline-none"
             >
 

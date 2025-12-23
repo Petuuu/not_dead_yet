@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Slides from "./Slides";
 
-export default function CourseCard({ course, deadlines, tasks }) {
+export default function CourseCard({ course, deadlines, tasks, updateTask }) {
     const [slide, setSlide] = useState(0);
     const [deadlineId, setDeadlineId] = useState(deadlines?.[0]?.id ?? null);
 
@@ -9,6 +9,12 @@ export default function CourseCard({ course, deadlines, tasks }) {
     const tasksList = Array.isArray(tasks) ? tasks : [];
 
     let isInserted = false;
+
+    function handleChange(e) {
+        const taskId = +e.target.id;
+        const task = tasksList.find(t => t.id === taskId);
+        updateTask(taskId, !task.checked);
+    }
 
     return (
         <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1vw] pb-[1vw]">
@@ -19,14 +25,22 @@ export default function CourseCard({ course, deadlines, tasks }) {
                     <p className="px-[1vw]"> No deadlines!! </p>
 
                 ) : deadlineList.length === 1 ? (
-                    <p className="px-[1vw]">
-                        {deadlineList[0].name}: {deadlineList[0].due}
+                    <p className="flex items-center gap-[0.3vw] px-[1vw]">
+                        <img
+                            src="/calendar.png"
+                            alt="calendar icon"
+                            className="size-[1vw]"
+                        /> {deadlineList[0].name}: {deadlineList[0].due}
                     </p>
 
                 ) : (
                     <>
-                        <p className="px-[1vw]">
-                            {deadlineList[slide].due}
+                        <p className="flex items-center gap-[0.3vw] px-[1vw]">
+                            <img
+                                src="/calendar.png"
+                                alt="calendar icon"
+                                className="size-[1vw]"
+                            /> {deadlineList[slide].due}
                         </p>
 
                         <Slides
@@ -57,16 +71,22 @@ export default function CourseCard({ course, deadlines, tasks }) {
                                 if (shouldInsert) isInserted = true;
 
                                 return (
-                                    <div key={task.id}>
-                                        {
-                                            shouldInsert && (
-                                                <hr className="mx-[0.8vw] mb-[1vw] border-neutral-800" />
-                                            )
-                                        }
-                                        <p className={`px-[1vw] ${isOld ? "text-neutral-400" : "text-black"}`}>
-                                            {task.todo}
-                                        </p>
-                                    </div>
+                                    <>
+                                        {shouldInsert && <hr className="mx-[1vw] mb-[0.5vw] border-neutral-800" />}
+                                        <div key={task.id} className="flex items-center px-[1vw]">
+                                            <input
+                                                type="checkbox"
+                                                id={task.id}
+                                                checked={task.checked}
+                                                onChange={handleChange}
+                                                className="peer size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
+                                            />
+
+                                            <label className={`peer-checked:line-through peer-checked:text-neutral-400 px-[1vw] ${isOld ? "text-neutral-500" : "text-black"}`}>
+                                                {task.todo}
+                                            </label>
+                                        </div>
+                                    </>
                                 )
                             })
                         }

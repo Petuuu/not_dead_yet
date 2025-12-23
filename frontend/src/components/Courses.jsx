@@ -66,6 +66,16 @@ export default function Courses() {
         // code
     };
 
+    async function updateTask(taskId, checked) {
+        try {
+            await api.put(`/tasks/${taskId}`, { checked });
+            fetchAll();
+        }
+        catch (e) {
+            console.error(`Error updating task ${taskId}:`, e);
+        }
+    }
+
     useEffect(() => {
         fetchAll();
     }, []);
@@ -74,7 +84,13 @@ export default function Courses() {
         <>
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
                 {courses.map(course => (
-                    <CourseCard course={course} deadlines={deadlines[course.id]} tasks={tasks[course.id]} />
+                    <CourseCard
+                        course={course}
+                        deadlines={deadlines[course.id]}
+                        tasks={tasks[course.id]}
+                        setTasks={setTasks}
+                        updateTask={updateTask}
+                    />
                 ))}
             </div>
 

@@ -27,7 +27,7 @@ export default function CourseForm({ addCourse }) {
                 <input
                     type="number"
                     value={credits}
-                    onChange={e => setCredits(Number(e.target.value))}
+                    onChange={e => setCredits(+e.target.value)}
                     className="bg-inherit w-[4vw] placeholder-stone-600 leading-tight focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]"
                 />
 
