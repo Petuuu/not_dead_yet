@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Slides from "./Slides";
 
 export default function CourseCard({ course, deadlines, tasks }) {
@@ -7,6 +7,8 @@ export default function CourseCard({ course, deadlines, tasks }) {
 
     const deadlineList = Array.isArray(deadlines) ? deadlines : [];
     const tasksList = Array.isArray(tasks) ? tasks : [];
+
+    let isInserted = false;
 
     return (
         <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1vw] pb-[1vw]">
@@ -44,11 +46,29 @@ export default function CourseCard({ course, deadlines, tasks }) {
                 ) : (
                     <>
                         {
-                            tasksList.map(task => task.deadline <= deadlineList[slide].name && (
-                                <p key={task.id} className="px-[1vw]">
-                                    {task.todo}
-                                </p>
-                            ))
+                            tasksList.map(task => {
+                                const hasOldTasks = tasksList.some(
+                                    task => task.deadline < deadlineList[slide].name
+                                );
+                                const isOld = task.deadline < deadlineList[slide].name
+                                const isCurr = task.deadline === deadlineList[slide].name;
+
+                                const shouldInsert = isCurr && hasOldTasks && !isInserted;
+                                if (shouldInsert) isInserted = true;
+
+                                return (
+                                    <div key={task.id}>
+                                        {
+                                            shouldInsert && (
+                                                <hr className="mx-[0.8vw] mb-[1vw] border-neutral-800" />
+                                            )
+                                        }
+                                        <p className={`px-[1vw] ${isOld ? "text-neutral-400" : "text-black"}`}>
+                                            {task.todo}
+                                        </p>
+                                    </div>
+                                )
+                            })
                         }
                     </>
                 )
