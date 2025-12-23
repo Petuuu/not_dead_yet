@@ -3,10 +3,9 @@ import Slides from "./Slides";
 
 export default function CourseCard({ course, deadlines, tasks }) {
     const [slide, setSlide] = useState(0);
-    const [dlIdx, setDlIdx] = useState(0);
 
     const deadlineList = Array.isArray(deadlines) ? deadlines : [];
-    const tasksList = Array.isArray(tasks[0]) ? tasks : [];
+    const tasksList = Array.isArray(tasks) ? tasks : [];
 
     return (
         <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1vw] pb-[1vw]">
@@ -40,11 +39,13 @@ export default function CourseCard({ course, deadlines, tasks }) {
                     <p className="px-[1vw]"> No tasks!!!</p>
 
                 ) : (
-                    tasksList.map((t, index) => {
-                        <p key={index} className="px-[1vw]">
-                            {t.todo}
-                        </p>
-                    })
+                    <>
+                        {tasksList.map((task, index) => index <= slide && (
+                            <p key={index} className="px-[1vw]">
+                                {task.todo}
+                            </p>
+                        ))}
+                    </>
                 )
             }
         </div>
