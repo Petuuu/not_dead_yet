@@ -9,7 +9,7 @@ To run **Not Dead Yet** locally, you need to setup a `PostgreSQL` (or with some 
 Before doing so, however, you need to install the required dependencies using:
 
 ```bash
-pip install -r backend/requirements
+pip install -r backend/requirements.txt
 ```
 
 
