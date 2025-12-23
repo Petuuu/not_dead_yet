@@ -70,8 +70,6 @@ export default function Courses() {
         fetchAll();
     }, []);
 
-    console.log(tasks[2])
-
     return (
         <>
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
@@ -83,7 +81,7 @@ export default function Courses() {
             <div>
                 <CourseForm addCourse={addCourse} />
                 <DeadlineForm addDeadline={addDeadline} courses={courses} />
-                <TaskForm addTask={addTask} courses={courses} deadlines={deadlines} />
+                <TaskForm addTask={addTask} courses={courses} deadlines={Object.values(deadlines)} />
             </div>
         </>
     );

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Slides from "./Slides";
 
 export default function CourseCard({ course, deadlines, tasks }) {
     const [slide, setSlide] = useState(0);
+    const [deadlineId, setDeadlineId] = useState(deadlines?.[0]?.id ?? null);
 
     const deadlineList = Array.isArray(deadlines) ? deadlines : [];
     const tasksList = Array.isArray(tasks) ? tasks : [];
@@ -26,9 +27,11 @@ export default function CourseCard({ course, deadlines, tasks }) {
                             {deadlineList[slide].due}
                         </p>
 
-                        <Slides deadlines={deadlineList}
+                        <Slides
+                            deadlines={deadlineList}
                             slide={slide}
                             setSlide={setSlide}
+                            setDeadlineId={setDeadlineId}
                         />
                     </>
                 )
@@ -40,11 +43,13 @@ export default function CourseCard({ course, deadlines, tasks }) {
 
                 ) : (
                     <>
-                        {tasksList.map((task, index) => index <= slide && (
-                            <p key={index} className="px-[1vw]">
-                                {task.todo}
-                            </p>
-                        ))}
+                        {
+                            tasksList.map(task => task.deadline <= deadlineList[slide].name && (
+                                <p key={task.id} className="px-[1vw]">
+                                    {task.todo}
+                                </p>
+                            ))
+                        }
                     </>
                 )
             }

@@ -23,9 +23,11 @@ export default function DeadlineForm({ addDeadline, courses }) {
             >
 
                 <option value={0} className="bg-[rgb(208,219,239)]"> Select a course </option>
-                {courses.map(course => (
-                    <option key={course.id} value={course.id} className="bg-[rgb(208,219,239)]"> {course.name} </option>
-                ))}
+                {
+                    courses.map(course => (
+                        <option key={course.id} value={course.id} className="bg-[rgb(208,219,239)]"> {course.name} </option>
+                    ))
+                }
             </select>
 
             <input
