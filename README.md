@@ -6,6 +6,12 @@
 
 To run **Not Dead Yet** locally, you need to setup a `PostgreSQL` (or with some modifications an `SQLite`) database and start the `FastAPI` backend and `React` frontend servers.
 
+Before doing so, however, you need to install the required dependencies using:
+
+```bash
+pip install -r backend/requirements
+```
+
 
 ### Database
 
