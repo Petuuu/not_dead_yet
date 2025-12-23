@@ -38,7 +38,7 @@ Then launch the application using:
 uvicorn main:app --reload
 ```
 
-Once running, the backend will be available at `http://localhost:8000`
+Once running, the backend will be available at `http://localhost:8000`. The FastAPI interactive documentation for the backend endpoints and schemas can be accessed at `http://localhost:8000/docs`.
 
 
 ### Frontend
@@ -55,4 +55,4 @@ Then launch the application using:
 npm start
 ```
 
-The frontend will be available at `http://localhost:3000`
+The frontend will be available at `http://localhost:3000`.
