@@ -7,8 +7,8 @@ import TaskForm from "./forms/TaskForm";
 
 export default function Courses() {
     const [courses, setCourses] = useState([]);
-    const [deadlines, setDeadlines] = useState({});
-    const [tasks, setTasks] = useState({});
+    const [deadlines, setDeadlines] = useState([]);
+    const [tasks, setTasks] = useState([]);
 
 
     async function fetchAll() {
@@ -18,12 +18,21 @@ export default function Courses() {
 
             for (const course of res.data) {
                 try {
-                    const dlRes = await api.get(`/deadlines/${course.id}`);
-                    setDeadlines(prev => ({ ...prev, [course.id]: dlRes.data }));
+                    const dlsRes = await api.get(`/deadlines/${course.id}`);
+                    setDeadlines(prev => ({ ...prev, [course.id]: dlsRes.data }));
                 }
                 catch (e) {
                     console.error(`Error fetching deadlines for course ${course.id}:`, e);
                     setDeadlines(prev => ({ ...prev, [course.id]: [] }));
+                }
+
+                try {
+                    const tasksRes = await api.get(`/tasks/${course.id}`);
+                    setTasks(prev => ({ ...prev, [course.id]: tasksRes.data }));
+                }
+                catch (e) {
+                    console.error(`Error fetching tasks for course ${course.id}:`, e);
+                    setTasks(prev => ({ ...prev, [course.id]: [] }));
                 }
             }
         }
@@ -60,6 +69,8 @@ export default function Courses() {
     useEffect(() => {
         fetchAll();
     }, []);
+
+    console.log(tasks[2])
 
     return (
         <>
