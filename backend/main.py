@@ -81,8 +81,8 @@ async def get_courses(db: db_dependency):
 async def update_course(course_id: int, new: CourseBase, db: db_dependency):
     prev = db.query(Courses).filter(Courses.id == course_id).first()
 
-    for key, value in new.model_dump().items():
-        setattr(prev, key, value)
+    prev.name = new.name
+    prev.credits = new.credits
 
     db.commit()
 
@@ -150,9 +150,8 @@ async def get_deadlines(course_id: int, db: db_dependency):
 async def update_deadline(dl_id: int, new: DeadlineBase, db: db_dependency):
     prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
 
-    for key, value in new.model_dump().items():
-        if key != "course":
-            setattr(prev, key, value)
+    prev.name = new.name
+    prev.due = new.due
 
     db.commit()
 
