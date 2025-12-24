@@ -242,7 +242,7 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
 
 
 @app.put("/tasks/{task_id}")
-async def update_task(task_id: int, checked: bool, db: db_dependency):
+async def update_checked(task_id: int, checked: bool, db: db_dependency):
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
     prev.checked = checked
     db.commit()

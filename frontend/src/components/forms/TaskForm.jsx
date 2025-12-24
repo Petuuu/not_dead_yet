@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function TaskForm({ addTask, courses, deadlines }) {
     const [courseId, setCourseId] = useState(0);
     const [deadlineId, setDeadlineId] = useState(0);
     const [todo, setTodo] = useState("");
+
+    useEffect(() => {
+        setDeadlineId(0);
+    }, [courseId]);
 
     function handleSubmit(e) {
         e.preventDefault();
@@ -14,7 +18,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[40vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[38vw]">
             <select
                 value={courseId}
                 onChange={e => setCourseId(+e.target.value)}
@@ -33,11 +37,12 @@ export default function TaskForm({ addTask, courses, deadlines }) {
                 value={deadlineId}
                 onChange={e => setDeadlineId(+e.target.value)}
                 className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 leading-tight focus:outline-none"
+                disabled={courseId === 0}
             >
 
-                <option value={0} className="bg-[rgb(208,219,239)]"> Select a course </option>
+                <option value={0} className="bg-[rgb(208,219,239)]"> Select a deadline </option>
                 {
-                    deadlines.map(deadline => deadline.course === courseId && (
+                    (Array.isArray(deadlines[courseId]) ? deadlines[courseId] : []).map(deadline => (
                         <option key={deadline.id} value={deadline.id} className="bg-[rgb(208,219,239)]"> {deadline.name} </option>
                     ))
                 }
@@ -52,7 +57,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
             />
 
             <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-[0.4vw] text-white py-[0.25vw] px-[0.4vw] rounded">
-                Add deadline
+                Add task
             </button>
         </form>);
 }

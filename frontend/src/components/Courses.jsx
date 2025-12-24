@@ -63,10 +63,16 @@ export default function Courses() {
     };
 
     async function addTask(courseId, deadlineId, todo) {
-        // code
+        try {
+            await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo });
+            fetchAll();
+        }
+        catch (e) {
+            console.error("Error adding task:", e)
+        }
     };
 
-    async function updateTask(taskId, checked) {
+    async function updateChecked(taskId, checked) {
         try {
             await api.put(`/tasks/${taskId}`, null, { params: { checked } });
             fetchAll();
@@ -89,15 +95,15 @@ export default function Courses() {
                         deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                         tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
                         setTasks={setTasks}
-                        updateTask={updateTask}
+                        updateTask={updateChecked}
                     />
                 ))}
             </div>
 
-            <div>
+            <div className="flex flex-wrap">
                 <CourseForm addCourse={addCourse} />
                 <DeadlineForm addDeadline={addDeadline} courses={courses} />
-                <TaskForm addTask={addTask} courses={courses} deadlines={Object.values(deadlines)} />
+                <TaskForm addTask={addTask} courses={courses} deadlines={deadlines} />
             </div>
         </>
     );
