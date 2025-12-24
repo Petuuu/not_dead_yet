@@ -66,7 +66,15 @@ async def add_course(course: CourseBase, db: db_dependency):
 @app.get("/courses/")
 async def get_courses(db: db_dependency):
     courses = db.query(Courses).order_by(Courses.id).all()
-    return courses or "No courses found"
+
+    return [
+        {
+            "id": c.id,
+            "name": c.name,
+            "credits": c.credits,
+        }
+        for c in courses
+    ] or "No courses found"
 
 
 @app.put("/courses/{course_id}")
@@ -143,7 +151,8 @@ async def update_deadline(dl_id: int, new: DeadlineBase, db: db_dependency):
     prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
 
     for key, value in new.model_dump().items():
-        setattr(prev, key, value)
+        if key != "course":
+            setattr(prev, key, value)
 
     db.commit()
 
