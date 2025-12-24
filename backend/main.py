@@ -246,3 +246,9 @@ async def update_checked(task_id: int, checked: bool, db: db_dependency):
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
     prev.checked = checked
     db.commit()
+
+
+@app.delete("/tasks/{task_id}")
+async def delete_task(task_id: int, db: db_dependency):
+    db.query(Tasks).filter(Tasks.id == task_id).delete()
+    db.commit()
