@@ -9,6 +9,7 @@ export default function Courses() {
     const [courses, setCourses] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
     const [tasks, setTasks] = useState([]);
+    const [edit, setEdit] = useState({});
 
 
     async function fetchAll() {
@@ -34,6 +35,8 @@ export default function Courses() {
                     console.error(`Error fetching tasks for course ${course.id}:`, e);
                     setTasks(prev => ({ ...prev, [course.id]: [] }));
                 }
+
+                setEdit(prev => ({ ...prev, [course.id]: false }))
             }
         }
         catch (e) {
@@ -89,15 +92,21 @@ export default function Courses() {
     return (
         <>
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
-                {courses.map(course => (
-                    <CourseCard
+                {courses.map(course => {
+                    if (edit[course.id]) return <p key={course.id}> miu </p>;
+
+                    return (
+                        <CourseCard
+                        key={course.id}
                         course={course}
                         deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                         tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
                         setTasks={setTasks}
                         updateTask={updateChecked}
-                    />
-                ))}
+                        setEdit={setEdit}
+                        />
+                    );
+                })}
             </div>
 
             <div className="flex flex-wrap">

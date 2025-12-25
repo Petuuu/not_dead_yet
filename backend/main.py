@@ -112,7 +112,7 @@ async def get_all_deadlines(db: db_dependency):
             Deadlines.id, Courses.name.label("course"), Deadlines.name, Deadlines.due
         )
         .join(Courses, Deadlines.course == Courses.id)
-        .order_by(Courses.id, Deadlines.id)
+        .order_by(Courses.id, Deadlines.due)
         .all()
     )
 
@@ -131,7 +131,7 @@ async def get_all_deadlines(db: db_dependency):
 async def get_deadlines(course_id: int, db: db_dependency):
     dls = (
         db.query(Deadlines)
-        .order_by(Deadlines.id)
+        .order_by(Deadlines.due)
         .filter(Deadlines.course == course_id)
         .all()
     )
@@ -141,6 +141,7 @@ async def get_deadlines(course_id: int, db: db_dependency):
             "id": d.id,
             "name": d.name,
             "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
+            "dlDue": [d.due.day, d.due.month, d.due.year],
         }
         for d in dls
     ] or "No deadlines found"
@@ -186,6 +187,7 @@ async def get_all_tasks(db: db_dependency):
             Tasks.id,
             Courses.name.label("course"),
             Deadlines.name.label("deadline"),
+            Deadlines.due.label("dlDue"),
             Tasks.todo,
             Tasks.checked,
         )
@@ -199,6 +201,7 @@ async def get_all_tasks(db: db_dependency):
             "id": t.id,
             "course": t.course,
             "deadline": t.deadline,
+            "dlDue": [t.dlDue.day, t.dlDue.month, t.dlDue.year],
             "todo": t.todo,
             "checked": t.checked,
         }
@@ -212,6 +215,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
         db.query(
             Tasks.id,
             Deadlines.name.label("deadline"),
+            Deadlines.due.label("dlDue"),
             Tasks.todo,
             Tasks.checked,
         )
@@ -224,6 +228,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
         {
             "id": t.id,
             "deadline": t.deadline,
+            "dlDue": [t.dlDue.day, t.dlDue.month, t.dlDue.year],
             "todo": t.todo,
             "checked": t.checked,
         }
