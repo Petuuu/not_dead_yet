@@ -95,7 +95,7 @@ export default function Courses() {
 
     async function updateDlDue(deadlineId, due) {
         try {
-            await api.put(`/deadlines/${deadlineId}/due`, { due: due });
+            await api.put(`/deadlines/${deadlineId}/due`, { due: new Date(due[2], due[1] - 1, due[0]) });
         }
         catch (e) {
             console.error(`Error updating deadline ${deadlineId}:`, e);

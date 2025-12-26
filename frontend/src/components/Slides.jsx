@@ -20,7 +20,6 @@ export default function Slides({
                 <h1 className="text-lg font-bold">
                     {edit ? (
                         <input
-                            type="text"
                             id={curr.id}
                             value={localDlName[curr.id] ?? curr.name}
                             onChange={e => setLocalDlName(prev => ({ ...prev, [curr.id]: e.target.value }))}

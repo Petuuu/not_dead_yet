@@ -31,7 +31,6 @@ export default function DeadlineForm({ addDeadline, courses }) {
             </select>
 
             <input
-                type="text"
                 value={deadlineName}
                 onChange={e => setDeadlineName(e.target.value)}
                 placeholder="Enter deadline name..."

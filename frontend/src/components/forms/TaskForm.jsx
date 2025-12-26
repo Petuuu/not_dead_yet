@@ -49,7 +49,6 @@ export default function TaskForm({ addTask, courses, deadlines }) {
             </select>
 
             <input
-                type="text"
                 value={todo}
                 onChange={e => setTodo(e.target.value)}
                 placeholder="Enter task name..."

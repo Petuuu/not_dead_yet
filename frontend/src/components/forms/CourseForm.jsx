@@ -16,7 +16,6 @@ export default function CourseForm({ addCourse }) {
     return (
         <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[20vw]">
             <input
-                type="text"
                 value={courseName}
                 onChange={e => setCourseName(e.target.value)}
                 placeholder="Enter course name..."

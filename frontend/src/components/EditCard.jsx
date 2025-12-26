@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Slides from "./Slides";
 
 export default function EditCard({
@@ -44,18 +44,23 @@ export default function EditCard({
         for (const [deadlineId, name] of Object.entries(localDlName)) {
             await updateDlName(+deadlineId, name);
         }
-        /*for (const [deadlineId, due] of Object.entries(localDlDue)) {
+        for (const [deadlineId, due] of Object.entries(localDlDue)) {
             await updateDlDue(+deadlineId, due);
-        }*/
+        }
         await updateCourse(course.id, localCourse.name, localCourse.credits);
 
         await fetchAll();
         setEdit(prev => ({ ...prev, [course.id]: false }));
     }
 
-    function handleDueChange(e) {
-        // code
-    }
+    function handleDueChange(idx, value) {
+        setLocalDlDue(prev => {
+            const existing = prev[currDl.id];
+            const updated = [...existing];
+            updated[idx] = value;
+            return { ...prev, [currDl.id]: updated };
+        });
+    };
 
     function handleTaskChange(e) {
         const id = +e.target.id;
@@ -63,12 +68,25 @@ export default function EditCard({
         setLocalTasks(prev => ({ ...prev, [id]: todo }));
     }
 
+    useEffect(() => {
+        const nameMap = {};
+        const dueMap = {};
+
+        deadlines.forEach(dl => {
+            const parts = dl.due.split("/");
+            nameMap[dl.id] = dl.name;
+            dueMap[dl.id] = [parts[0], parts[1], parts[2]];
+        });
+
+        setLocalDlName(nameMap);
+        setLocalDlDue(dueMap);
+    }, [deadlines])
+
     return (
         <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1.5vw] pb-[1.5vw]">
             <div className="flex items-center justify-between mr-[1vw]">
                 <h1 className="flex mx-[1vw] font-bold">
                     <input
-                        type="text"
                         id={course.id}
                         value={localCourse.name}
                         onChange={e => setLocalCourse(prev => ({ ...prev, name: e.target.value }))}
@@ -77,7 +95,6 @@ export default function EditCard({
                     />
 
                     (<input
-                        type="text"
                         id={course.id}
                         value={localCourse.credits}
                         onChange={e => setLocalCourse(prev => ({ ...prev, credits: e.target.value }))}
@@ -100,13 +117,34 @@ export default function EditCard({
                         <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
                         <p>
                             <input
-                                type="text"
                                 id={currDl.id}
                                 value={localDlName[currDl.id] ?? currDl.name}
                                 onChange={e => setLocalDlName(prev => ({ ...prev, [currDl.id]: e.target.value }))}
                                 autoComplete="off"
-                                className={"bg-inherit mr-[0.5vw] mb-[0.2vw] pb-[0.2vw] w-[5vw] border-b-[0.13vw] border-neutral-500 outline-none"}
-                            />: {currDl.due}
+                                className={"bg-inherit mb-[0.2vw] pb-[0.2vw] w-[5vw] border-b-[0.13vw] border-neutral-500 outline-none"}
+                            /> :
+
+                            <input
+                                id={currDl.id}
+                                value={localDlDue[currDl.id]?.[0] ?? currDue.getDate()}
+                                onChange={e => handleDueChange(0, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            /> /
+
+                            <input
+                                value={localDlDue[currDl.id]?.[1] ?? currDue.getMonth() + 1}
+                                onChange={e => handleDueChange(1, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            /> /
+
+                            <input
+                                value={localDlDue[currDl.id]?.[2] ?? currDue.getFullYear()}
+                                onChange={e => handleDueChange(2, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[2.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            />
                         </p>
                     </div>
 
@@ -114,7 +152,28 @@ export default function EditCard({
                     <>
                         <div className="flex items-center gap-[0.3vw] mx-[1vw]">
                             <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                            <p> {currDl.due} </p>
+
+                            <input
+                                id={currDl.id}
+                                value={localDlDue[currDl.id]?.[0] ?? currDue.getDate()}
+                                onChange={e => handleDueChange(0, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            /> /
+
+                            <input
+                                value={localDlDue[currDl.id]?.[1] ?? currDue.getMonth() + 1}
+                                onChange={e => handleDueChange(1, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            /> /
+
+                            <input
+                                value={localDlDue[currDl.id]?.[2] ?? currDue.getFullYear()}
+                                onChange={e => handleDueChange(2, e.target.value)}
+                                autoComplete="off"
+                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[2.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            />
                         </div>
 
                             <Slides
@@ -157,7 +216,6 @@ export default function EditCard({
                                         <div key={task.id}>
                                             {shouldInsert && <hr className="mx-[1vw] mb-[1vw] border-neutral-800" />}
                                             <input
-                                                type="text"
                                                 id={task.id}
                                                 value={localTasks[task.id] ?? task.todo}
                                                 onChange={handleTaskChange}
