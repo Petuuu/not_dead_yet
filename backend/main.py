@@ -1,11 +1,11 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, status, Response, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Annotated
 from sqlalchemy.orm import Session
+from datetime import datetime, timedelta
 from db import engine, SessionLocal
 from models import Base, Courses, Deadlines, Tasks
-from datetime import datetime
 
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
@@ -115,9 +115,47 @@ async def delete_course(course_id: int, db: db_dependency):
 
 @app.post("/deadlines/")
 async def add_deadline(dl: DeadlineBase, db: db_dependency):
-    db_deadline = Deadlines(course=dl.course, name=dl.name, due=dl.due)
-    db.add(db_deadline)
+    deadline = Deadlines(course=dl.course, name=dl.name, due=dl.due)
+    db.add(deadline)
     db.commit()
+
+
+@app.post("/deadlines/{dl_id}")
+async def duplicate_deadline(dl_id: int, db: db_dependency):
+    dl = (
+        db.query(Deadlines.course, Deadlines.name, Deadlines.due)
+        .filter(Deadlines.id == dl_id)
+        .first()
+    )
+
+    if not dl:
+        return "No deadline found"
+
+    tasks = db.query(Tasks.todo).filter(Tasks.deadline == dl_id).all()
+
+    new_name = ""
+    as_int = 0
+    times = 1
+    for c in dl.name:
+        if c.isdigit():
+            as_int *= times
+            as_int += int(c)
+        else:
+            new_name += c
+
+    if as_int == 0:
+        return Response(status_code=status.HTTP_204_NO_CONTENT)
+
+    new_name += str(as_int + 1)
+    new_due = dl.due + timedelta(days=7)
+
+    new_dl = Deadlines(course=dl.course, name=new_name, due=new_due)
+    db.add(new_dl)
+    db.commit()
+    db.refresh(new_dl)
+
+    for t in tasks:
+        await add_task(Tasks(course=dl.course, deadline=new_dl.id, todo=t.todo), db)
 
 
 @app.get("/deadlines/")
@@ -127,7 +165,7 @@ async def get_all_deadlines(db: db_dependency):
             Deadlines.id, Courses.name.label("course"), Deadlines.name, Deadlines.due
         )
         .join(Courses, Deadlines.course == Courses.id)
-        .order_by(Courses.id, Deadlines.due)
+        .order_by(Courses.id, Deadlines.due, Deadlines.id)
         .all()
     )
 
@@ -146,7 +184,7 @@ async def get_all_deadlines(db: db_dependency):
 async def get_deadlines(course_id: int, db: db_dependency):
     dls = (
         db.query(Deadlines)
-        .order_by(Deadlines.due)
+        .order_by(Deadlines.due, Deadlines.id)
         .filter(Deadlines.course == course_id)
         .all()
     )
@@ -212,7 +250,7 @@ async def get_all_tasks(db: db_dependency):
         )
         .join(Courses, Tasks.course == Courses.id)
         .join(Deadlines, Tasks.deadline == Deadlines.id)
-        .order_by(Courses.id, Deadlines.due, Tasks.id)
+        .order_by(Courses.id, Deadlines.due, Deadlines.id, Tasks.id)
         .all()
     )
 
