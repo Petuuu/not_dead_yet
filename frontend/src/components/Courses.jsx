@@ -65,6 +65,16 @@ export default function Courses() {
         }
     };
 
+    async function duplicateDl(deadlineId) {
+        try {
+            await api.post(`/deadlines/${deadlineId}`);
+            await fetchAll();
+        }
+        catch (e) {
+            console.error(`Error duplicating deadline ${deadlineId}`);
+        }
+    }
+
     async function addTask(courseId, deadlineId, todo) {
         try {
             await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo });
@@ -121,6 +131,36 @@ export default function Courses() {
         }
     }
 
+    async function deleteCourse(courseId) {
+        try {
+            await api.delete(`/courses/${courseId}`);
+            await fetchAll();
+        }
+        catch (e) {
+            console.error(`Error deleting course ${courseId}:`, e);
+        }
+    }
+
+    async function deleteDeadline(deadlineId) {
+        try {
+            await api.delete(`/deadlines/${deadlineId}`);
+            await fetchAll();
+        }
+        catch (e) {
+            console.error(`Error deleting deadline ${deadlineId}:`, e);
+        }
+    }
+
+    async function deleteTask(taskId) {
+        try {
+            await api.delete(`/tasks/${taskId}`);
+            await fetchAll();
+        }
+        catch (e) {
+            console.error(`Error deleting task ${taskId}:`, e);
+        }
+    }
+
     async function load() {
         await fetchAll();
         initSlides();
@@ -143,32 +183,36 @@ export default function Courses() {
                     if (edit[c.id]) {
                         return (
                             <EditCard
-                            key={c.id}
-                            course={c}
-                            deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
-                            tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
-                            slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
-                            setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
-                            setEdit={setEdit}
-                            updateCourse={updateCourse}
-                            updateDlName={updateDlName}
-                            updateDlDue={updateDlDue}
-                            updateTodo={updateTodo}
-                            fetchAll={fetchAll}
+                                key={c.id}
+                                course={c}
+                                deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                                tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
+                                slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
+                                setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                                setEdit={setEdit}
+                                duplicateDl={duplicateDl}
+                                updateCourse={updateCourse}
+                                updateDlName={updateDlName}
+                                updateDlDue={updateDlDue}
+                                updateTodo={updateTodo}
+                                deleteCourse={deleteCourse}
+                                deleteDeadline={deleteDeadline}
+                                deleteTask={deleteTask}
+                                fetchAll={fetchAll}
                             />
                         );
                     }
 
                     return (
                         <CourseCard
-                        key={c.id}
-                        course={c}
-                        deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
-                        tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
-                        slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
-                        setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
-                        updateChecked={updateChecked}
-                        setEdit={setEdit}
+                            key={c.id}
+                            course={c}
+                            deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                            tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
+                            slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
+                            setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                            updateChecked={updateChecked}
+                            setEdit={setEdit}
                         />
                     );
                 })}

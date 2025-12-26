@@ -8,10 +8,14 @@ export default function EditCard({
     slide,
     setSlide,
     setEdit,
+    duplicateDl,
     updateCourse,
     updateDlName,
     updateDlDue,
     updateTodo,
+    deleteCourse,
+    deleteDeadline,
+    deleteTask,
     fetchAll
 }) {
     const [localCourse, setLocalCourse] = useState({ name: course.name, credits: course.credits });
@@ -37,7 +41,7 @@ export default function EditCard({
     let tasksOutput = true;
     let hasCurr = false;
 
-    async function handleClick() {
+    async function handleSave() {
         for (const [taskId, todo] of Object.entries(localTasks)) {
             await updateTodo(+taskId, todo);
         }
@@ -51,6 +55,16 @@ export default function EditCard({
 
         await fetchAll();
         setEdit(prev => ({ ...prev, [course.id]: false }));
+    }
+
+    function handleDelete(type, id, name) {
+        const text = `Are you sure you want to delete ${type} "${name}"`;
+
+        if (window.confirm(text)) {
+            if (type === "course") deleteCourse(id);
+            else if (type === "deadline") deleteDeadline(id);
+            else deleteTask(id);
+        }
     }
 
     function handleDueChange(idx, value) {
@@ -103,9 +117,15 @@ export default function EditCard({
                     /> op)
                 </h1>
 
-                <button onClick={handleClick}>
-                    <img src="/check.png" alt="edit" className="size-[1.1vw]" />
-                </button>
+                <div className="flex gap-[0.5vw] items-center">
+                    <button onClick={() => handleDelete("course", course.id, course.name)}>
+                        <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
+                    </button>
+
+                    <button onClick={handleSave}>
+                        <img src="/check.png" alt="confirm" className="size-[1.1vw]" />
+                    </button>
+                </div>
             </div>
 
             {
@@ -113,9 +133,10 @@ export default function EditCard({
                     <p className="mx-[1vw]"> No deadlines!! </p>
 
                 ) : deadlines.length === 1 ? (
-                    <div className="flex items-center gap-[0.3vw] mx-[1vw]">
-                        <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                        <p>
+                    <div className="flex items-center justify-between mx-[1vw]">
+                        <p className="flex items-center gap-[0.3vw]">
+                            <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
+
                             <input
                                 id={currDl.id}
                                 value={localDlName[currDl.id] ?? currDl.name}
@@ -146,34 +167,50 @@ export default function EditCard({
                                 className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[2.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
                             />
                         </p>
+
+                        <button onClick={() => handleDelete("deadline", currDl.id, currDl.name)}>
+                            <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
+                        </button>
                     </div>
 
                 ) : (
                     <>
-                        <div className="flex items-center gap-[0.3vw] mx-[1vw]">
-                            <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
+                        <div className="flex items-center justify-between mx-[1vw]">
+                            <div className="flex items-center gap-[0.3vw]">
+                                <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
 
-                            <input
-                                id={currDl.id}
-                                value={localDlDue[currDl.id]?.[0] ?? currDue.getDate()}
-                                onChange={e => handleDueChange(0, e.target.value)}
-                                autoComplete="off"
-                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
-                            /> /
+                                <input
+                                    id={currDl.id}
+                                    value={localDlDue[currDl.id]?.[0] ?? currDue.getDate()}
+                                    onChange={e => handleDueChange(0, e.target.value)}
+                                    autoComplete="off"
+                                    className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                                /> /
 
-                            <input
-                                value={localDlDue[currDl.id]?.[1] ?? currDue.getMonth() + 1}
-                                onChange={e => handleDueChange(1, e.target.value)}
-                                autoComplete="off"
-                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
-                            /> /
+                                <input
+                                    value={localDlDue[currDl.id]?.[1] ?? currDue.getMonth() + 1}
+                                    onChange={e => handleDueChange(1, e.target.value)}
+                                    autoComplete="off"
+                                    className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[1.2vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                                /> /
 
-                            <input
-                                value={localDlDue[currDl.id]?.[2] ?? currDue.getFullYear()}
-                                onChange={e => handleDueChange(2, e.target.value)}
-                                autoComplete="off"
-                                className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[2.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
-                            />
+                                <input
+                                    value={localDlDue[currDl.id]?.[2] ?? currDue.getFullYear()}
+                                    onChange={e => handleDueChange(2, e.target.value)}
+                                    autoComplete="off"
+                                    className={"bg-inherit mx-[0.1vw] mb-[0.2vw] pb-[0.2vw] w-[2.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                                />
+                            </div>
+
+                            <div className="flex gap-[0.5vw] items-center">
+                                <button onClick={() => handleDelete("course", course.id, course.name)}>
+                                    <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
+                                </button>
+
+                                <button onClick={() => duplicateDl(currDl.id)}>
+                                    <img src="/duplicate.png" alt="confirm" className="size-[1.1vw]" />
+                                </button>
+                            </div>
                         </div>
 
                             <Slides

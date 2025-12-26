@@ -140,6 +140,7 @@ async def duplicate_deadline(dl_id: int, db: db_dependency):
         if c.isdigit():
             as_int *= times
             as_int += int(c)
+            times *= 10
         else:
             new_name += c
 
