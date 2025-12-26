@@ -62,8 +62,7 @@ export default function EditCard({
 
         if (window.confirm(text)) {
             if (type === "course") deleteCourse(id);
-            else if (type === "deadline") deleteDeadline(id);
-            else deleteTask(id);
+            else deleteDeadline(id);
         }
     }
 
@@ -83,17 +82,17 @@ export default function EditCard({
     }
 
     useEffect(() => {
-        const nameMap = {};
-        const dueMap = {};
+        const name = {};
+        const due = {};
 
         deadlines.forEach(dl => {
             const parts = dl.due.split("/");
-            nameMap[dl.id] = dl.name;
-            dueMap[dl.id] = [parts[0], parts[1], parts[2]];
+            name[dl.id] = dl.name;
+            due[dl.id] = [parts[0], parts[1], parts[2]];
         });
 
-        setLocalDlName(nameMap);
-        setLocalDlDue(dueMap);
+        setLocalDlName(name);
+        setLocalDlDue(due);
     }, [deadlines])
 
     return (
@@ -227,15 +226,15 @@ export default function EditCard({
 
             {
                 tasks.length === 0 ? (
-                    <p className="mx-[1vw]"> No tasks!!!</p>
+                    <p className="mx-[1vw]"> No tasks!! </p>
 
                 ) : (
                     <>
                         {
-                            tasks.map(task => {
-                                const taskDate = toDate(task.dlDue);
+                            tasks.map(t => {
+                                const taskDate = toDate(t.dlDue);
                                 const isOld = currDue && taskDate ? taskDate < currDue : false;
-                                const isCurr = task.deadline === currDl?.name;
+                                const isCurr = t.deadline === currDl?.name;
                                 if (isCurr) hasCurr = true;
 
                                 const shouldInsert = isCurr && hasOldTasks && !isInserted;
@@ -250,15 +249,21 @@ export default function EditCard({
 
                                 if (isOld || isCurr) {
                                     return (
-                                        <div key={task.id}>
-                                            {shouldInsert && <hr className="mx-[1vw] mb-[1vw] border-neutral-800" />}
-                                            <input
-                                                id={task.id}
-                                                value={localTasks[task.id] ?? task.todo}
-                                                onChange={handleTaskChange}
-                                                autoComplete="off"
-                                                className={`bg-inherit mx-[3.3vw] pb-[0.2vw] w-[11vw] border-b-[0.13vw] border-neutral-500 outline-none ${isOld ? "text-neutral-500" : "text-black"}`}
-                                            />
+                                        <div key={t.id} className="flex items-center justify-between mx-[1vw]">
+                                            <div>
+                                                {shouldInsert && <hr className="mx-[1vw] mb-[1vw] border-neutral-800" />}
+                                                <input
+                                                    id={t.id}
+                                                    value={localTasks[t.id] ?? t.todo}
+                                                    onChange={handleTaskChange}
+                                                    autoComplete="off"
+                                                    className={`bg-inherit mx-[2.3vw] pb-[0.2vw] w-[11vw] border-b-[0.13vw] border-neutral-500 outline-none ${isOld ? "text-neutral-500" : "text-black"}`}
+                                                />
+                                            </div>
+
+                                            <button onClick={() => deleteTask(t.id)}>
+                                                <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
+                                            </button>
                                         </div>
                                     );
                                 }

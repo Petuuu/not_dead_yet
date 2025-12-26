@@ -17,8 +17,8 @@ export default function CourseCard({
     const currDl = deadlines[slide];
     const currDue = toDate(currDl?.dlDue);
     const hasOldTasks = currDue
-        ? tasks.some(task => {
-            const taskDate = toDate(task.dlDue);
+        ? tasks.some(t => {
+            const taskDate = toDate(t.dlDue);
             return taskDate ? taskDate < currDue : false;
         })
         : false;
@@ -72,15 +72,15 @@ export default function CourseCard({
 
             {
                 tasks.length === 0 ? (
-                    <p className="mx-[1vw]"> No tasks!!!</p>
+                    <p className="mx-[1vw]"> No tasks!! </p>
 
                 ) : (
                     <>
                         {
-                            tasks.map(task => {
-                                const taskDate = toDate(task.dlDue);
+                            tasks.map(t => {
+                                const taskDate = toDate(t.dlDue);
                                 const isOld = currDue && taskDate ? taskDate < currDue : false;
-                                const isCurr = task.deadline === currDl?.name;
+                                const isCurr = t.deadline === currDl?.name;
                                 if (isCurr) hasCurr = true;
 
                                 const shouldInsert = isCurr && hasOldTasks && !isInserted;
@@ -95,19 +95,19 @@ export default function CourseCard({
 
                                 if (isOld || isCurr) {
                                     return (
-                                        <div key={task.id}>
+                                        <div key={t.id}>
                                             {shouldInsert && <hr className="mx-[1vw] mb-[1vw] border-neutral-800" />}
                                             <div className="flex items-center mx-[1vw]">
                                                 <input
                                                     type="checkbox"
-                                                    id={task.id}
-                                                    checked={task.checked}
+                                                    id={t.id}
+                                                    checked={t.checked}
                                                     onChange={handleChange}
                                                     className="peer size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
                                                 />
 
                                                 <label className={`mx-[1vw] peer-checked:line-through peer-checked:text-neutral-400 ${isOld ? "text-neutral-500" : "text-black"}`}>
-                                                    {task.todo}
+                                                    {t.todo}
                                                 </label>
                                             </div>
                                         </div>

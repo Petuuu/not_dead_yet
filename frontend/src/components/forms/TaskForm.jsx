@@ -27,8 +27,8 @@ export default function TaskForm({ addTask, courses, deadlines }) {
 
                 <option value={0} className="bg-[rgb(208,219,239)]"> Select a course </option>
                 {
-                    courses.map(course => (
-                        <option key={course.id} value={course.id} className="bg-[rgb(208,219,239)]"> {course.name} </option>
+                    courses.map(c => (
+                        <option key={c.id} value={c.id} className="bg-[rgb(208,219,239)]"> {c.name} </option>
                     ))
                 }
             </select>
@@ -42,8 +42,8 @@ export default function TaskForm({ addTask, courses, deadlines }) {
 
                 <option value={0} className="bg-[rgb(208,219,239)]"> Select a deadline </option>
                 {
-                    (Array.isArray(deadlines[courseId]) ? deadlines[courseId] : []).map(deadline => (
-                        <option key={deadline.id} value={deadline.id} className="bg-[rgb(208,219,239)]"> {deadline.name} </option>
+                    (Array.isArray(deadlines[courseId]) ? deadlines[courseId] : []).map(dl => (
+                        <option key={dl.id} value={dl.id} className="bg-[rgb(208,219,239)]"> {dl.name} </option>
                     ))
                 }
             </select>
