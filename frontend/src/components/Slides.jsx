@@ -25,7 +25,7 @@ export default function Slides({
                             value={localDlName[curr.id] ?? curr.name}
                             onChange={e => setLocalDlName(prev => ({ ...prev, [curr.id]: e.target.value }))}
                             autoComplete="off"
-                            className={"bg-inherit mr-[0.5vw] mb-[0.2vw] pb-[0.2vw] w-[8.5vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
+                            className={"bg-inherit mr-[0.5vw] mb-[0.2vw] pb-[0.2vw] w-[11vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
                         />
                     ) : (
                         <p> {curr.name} </p>

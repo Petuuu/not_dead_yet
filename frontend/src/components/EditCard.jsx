@@ -82,7 +82,7 @@ export default function EditCard({
                         value={localCourse.credits}
                         onChange={e => setLocalCourse(prev => ({ ...prev, credits: e.target.value }))}
                         autoComplete="off"
-                        className={"bg-inherit ml-[0.2vw] pb-[0.2vw] w-[1vw] border-b-[0.13vw] border-neutral-500 outline-none"}
+                        className={"bg-inherit pb-[0.2vw] w-[1vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
                     /> op)
                 </h1>
 
@@ -98,14 +98,23 @@ export default function EditCard({
                 ) : deadlines.length === 1 ? (
                     <div className="flex items-center gap-[0.3vw] mx-[1vw]">
                         <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                        <p> {deadlines[slide].name}: {deadlines[slide].due} </p>
+                        <p>
+                            <input
+                                type="text"
+                                id={currDl.id}
+                                value={localDlName[currDl.id] ?? currDl.name}
+                                onChange={e => setLocalDlName(prev => ({ ...prev, [currDl.id]: e.target.value }))}
+                                autoComplete="off"
+                                className={"bg-inherit mr-[0.5vw] mb-[0.2vw] pb-[0.2vw] w-[5vw] border-b-[0.13vw] border-neutral-500 outline-none"}
+                            />: {currDl.due}
+                        </p>
                     </div>
 
                 ) : (
                     <>
                         <div className="flex items-center gap-[0.3vw] mx-[1vw]">
                             <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                            <p> {deadlines[slide].due} </p>
+                            <p> {currDl.due} </p>
                         </div>
 
                             <Slides
