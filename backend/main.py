@@ -40,11 +40,16 @@ class TaskBase(BaseModel):
     checked: bool = False
 
 
-class CheckedUpdate(BaseModel):
+class UpdateDeadline(BaseModel):
+    name: str
+    due: datetime
+
+
+class UpdateChecked(BaseModel):
     checked: bool
 
 
-class TodoUpdate(BaseModel):
+class UpdateTodo(BaseModel):
     todo: str
 
 
@@ -88,7 +93,6 @@ async def get_courses(db: db_dependency):
 @app.put("/courses/{course_id}")
 async def update_course(course_id: int, new: CourseBase, db: db_dependency):
     prev = db.query(Courses).filter(Courses.id == course_id).first()
-
     prev.name = new.name
     prev.credits = new.credits
 
@@ -266,14 +270,14 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
 
 
 @app.put("/tasks/{task_id}/checked")
-async def update_checked(task_id: int, update: CheckedUpdate, db: db_dependency):
+async def update_checked(task_id: int, update: UpdateChecked, db: db_dependency):
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
     prev.checked = update.checked
     db.commit()
 
 
 @app.put("/tasks/{task_id}/todo")
-async def update_todo(task_id: int, update: TodoUpdate, db: db_dependency):
+async def update_todo(task_id: int, update: UpdateTodo, db: db_dependency):
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
     prev.todo = update.todo
     db.commit()

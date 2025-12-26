@@ -1,7 +1,13 @@
 import { useState } from "react";
 import Slides from "./Slides";
 
-export default function CourseCard({ course, deadlines, tasks, updateChecked, setEdit }) {
+export default function CourseCard({
+    course,
+    deadlines,
+    tasks,
+    setEdit,
+    updateChecked
+}) {
     const [slide, setSlide] = useState(0);
 
     const toDate = (dlArr) => {
@@ -43,23 +49,18 @@ export default function CourseCard({ course, deadlines, tasks, updateChecked, se
                     <p className="mx-[1vw]"> No deadlines!! </p>
 
                 ) : deadlines.length === 1 ? (
-                    <p className="flex items-center gap-[0.3vw] mx-[1vw]">
-                        <img
-                            src="/calendar.png"
-                            alt="calendar icon"
-                            className="size-[1vw]"
-                        /> {deadlines[0].name}: {deadlines[0].due}
-                    </p>
+                    <div className="flex items-center gap-[0.3vw] mx-[1vw]">
+                        <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
+                        <p> {deadlines[0].name}: {deadlines[0].due} </p>
+                    </div>
 
                 ) : (
                     <>
-                        <p className="flex items-center gap-[0.3vw] mx-[1vw]">
-                            <img
-                                src="/calendar.png"
-                                alt="calendar icon"
-                                className="size-[1vw]"
-                            /> {deadlines[slide].due}
-                        </p>
+                        <div className="flex items-center gap-[0.3vw] mx-[1vw]">
+                            <img src="/calendar.png" alt="calendar icon" className="size-[1vw]"
+                            />
+                            <p> {deadlines[slide].due} </p>
+                        </div>
 
                         <Slides
                             deadlines={deadlines}

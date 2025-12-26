@@ -76,6 +76,25 @@ export default function Courses() {
         }
     };
 
+    async function updateCourse(courseId, name, credits) {
+        try {
+            console.log(name);
+            await api.put(`/courses/${courseId}`, { name: name, credits: credits });
+        }
+        catch (e) {
+            console.error(`Error updating course ${courseId}:`, e);
+        }
+    }
+
+    async function updateDeadline(deadlineId, name, due) {
+        try {
+            await api.put(`/deadlines/${deadlineId}`, { name: name, due: due });
+        }
+        catch (e) {
+            console.error(`Error updating deadline ${deadlineId}:`, e);
+        }
+    }
+
     async function updateChecked(taskId, checked) {
         try {
             await api.put(`/tasks/${taskId}/checked`, { checked: checked });
@@ -88,8 +107,6 @@ export default function Courses() {
 
     async function updateTodo(taskId, todo) {
         try {
-            console.log(taskId);
-            console.log(todo);
             await api.put(`/tasks/${taskId}/todo`, { todo: todo });
         }
         catch (e) {
@@ -113,6 +130,8 @@ export default function Courses() {
                             deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                             tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
                             setEdit={setEdit}
+                            updateCourse={updateCourse}
+                            updateDeadline={updateDeadline}
                             updateTodo={updateTodo}
                             fetchAll={fetchAll}
                             />

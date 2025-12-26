@@ -53,6 +53,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
                 value={todo}
                 onChange={e => setTodo(e.target.value)}
                 placeholder="Enter task name..."
+                autocomplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
             />
 
