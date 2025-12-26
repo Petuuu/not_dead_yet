@@ -10,8 +10,8 @@ export default function Courses() {
     const [courses, setCourses] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
     const [tasks, setTasks] = useState([]);
+    const [slide, setSlide] = useState({});
     const [edit, setEdit] = useState({});
-
 
     async function fetchAll() {
         try {
@@ -55,7 +55,6 @@ export default function Courses() {
         }
     };
 
-
     async function addDeadline(courseId, name, due_date) {
         try {
             await api.post("/deadlines/", { course: courseId, name: name, due: due_date });
@@ -78,7 +77,6 @@ export default function Courses() {
 
     async function updateCourse(courseId, name, credits) {
         try {
-            console.log(name);
             await api.put(`/courses/${courseId}`, { name: name, credits: credits });
         }
         catch (e) {
@@ -86,9 +84,18 @@ export default function Courses() {
         }
     }
 
-    async function updateDeadline(deadlineId, name, due) {
+    async function updateDlName(deadlineId, name) {
         try {
-            await api.put(`/deadlines/${deadlineId}`, { name: name, due: due });
+            await api.put(`/deadlines/${deadlineId}/name`, { name: name });
+        }
+        catch (e) {
+            console.error(`Error updating deadline ${deadlineId}:`, e);
+        }
+    }
+
+    async function updateDlDue(deadlineId, due) {
+        try {
+            await api.put(`/deadlines/${deadlineId}/due`, { due: due });
         }
         catch (e) {
             console.error(`Error updating deadline ${deadlineId}:`, e);
@@ -114,24 +121,38 @@ export default function Courses() {
         }
     }
 
+    async function load() {
+        await fetchAll();
+        initSlides();
+    }
+
+    function initSlides() {
+        courses.forEach(c => {
+            setSlide(prev => ({ ...prev, [c.id]: 0 }))
+        })
+    }
+
     useEffect(() => {
-        fetchAll();
+        load();
     }, []);
 
     return (
         <>
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
-                {courses.map(course => {
-                    if (edit[course.id]) {
+                {courses.map(c => {
+                    if (edit[c.id]) {
                         return (
                             <EditCard
-                            key={course.id}
-                            course={course}
-                            deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
-                            tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
+                            key={c.id}
+                            course={c}
+                            deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                            tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
+                            slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
+                            setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
                             setEdit={setEdit}
                             updateCourse={updateCourse}
-                            updateDeadline={updateDeadline}
+                            updateDlName={updateDlName}
+                            updateDlDue={updateDlDue}
                             updateTodo={updateTodo}
                             fetchAll={fetchAll}
                             />
@@ -140,10 +161,12 @@ export default function Courses() {
 
                     return (
                         <CourseCard
-                        key={course.id}
-                        course={course}
-                        deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
-                        tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
+                        key={c.id}
+                        course={c}
+                        deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                        tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
+                        slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
+                        setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
                         updateChecked={updateChecked}
                         setEdit={setEdit}
                         />

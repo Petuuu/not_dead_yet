@@ -5,15 +5,18 @@ export default function EditCard({
     course,
     deadlines,
     tasks,
+    slide,
+    setSlide,
     setEdit,
     updateCourse,
-    updateDeadline,
+    updateDlName,
+    updateDlDue,
     updateTodo,
-    fetchAll,
+    fetchAll
 }) {
-    const [slide, setSlide] = useState(0);
     const [localCourse, setLocalCourse] = useState({ name: course.name, credits: course.credits });
-    const [localDls, setLocalDls] = useState({});
+    const [localDlName, setLocalDlName] = useState({});
+    const [localDlDue, setLocalDlDue] = useState({});
     const [localTasks, setLocalTasks] = useState({});
 
     const toDate = (dlArr) => {
@@ -38,17 +41,16 @@ export default function EditCard({
         for (const [taskId, todo] of Object.entries(localTasks)) {
             await updateTodo(+taskId, todo);
         }
-        for (const [deadlineId, name, due] of Object.entries(localDls)) {
-            await updateDeadline(+deadlineId, name, due);
+        for (const [deadlineId, name] of Object.entries(localDlName)) {
+            await updateDlName(+deadlineId, name);
         }
+        /*for (const [deadlineId, due] of Object.entries(localDlDue)) {
+            await updateDlDue(+deadlineId, due);
+        }*/
         await updateCourse(course.id, localCourse.name, localCourse.credits);
 
         await fetchAll();
         setEdit(prev => ({ ...prev, [course.id]: false }));
-    }
-
-    function handleDlChange(e) {
-        // code
     }
 
     function handleDueChange(e) {
@@ -70,20 +72,18 @@ export default function EditCard({
                         id={course.id}
                         value={localCourse.name}
                         onChange={e => setLocalCourse(prev => ({ ...prev, name: e.target.value }))}
-                        autocomplete="off"
+                        autoComplete="off"
                         className={"bg-inherit mr-[0.5vw] pb-[0.2vw] w-[9vw] border-b-[0.13vw] border-neutral-500 outline-none"}
                     />
 
-                    (
-                    <input
+                    (<input
                         type="text"
                         id={course.id}
                         value={localCourse.credits}
                         onChange={e => setLocalCourse(prev => ({ ...prev, credits: e.target.value }))}
-                        autocomplete="off"
+                        autoComplete="off"
                         className={"bg-inherit ml-[0.2vw] pb-[0.2vw] w-[1vw] border-b-[0.13vw] border-neutral-500 outline-none"}
-                    />
-                    op)
+                    /> op)
                 </h1>
 
                 <button onClick={handleClick}>
@@ -104,15 +104,18 @@ export default function EditCard({
                 ) : (
                     <>
                         <div className="flex items-center gap-[0.3vw] mx-[1vw]">
-                                <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                                <p> {deadlines[slide].due} </p>
+                            <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
+                            <p> {deadlines[slide].due} </p>
                         </div>
 
-                        <Slides
-                            deadlines={deadlines}
-                            slide={slide}
-                            setSlide={setSlide}
-                        />
+                            <Slides
+                                deadlines={deadlines}
+                                slide={slide}
+                                setSlide={setSlide}
+                                edit={true}
+                                localDlName={localDlName}
+                                setLocalDlName={setLocalDlName}
+                            />
                     </>
                 )
             }
@@ -149,7 +152,7 @@ export default function EditCard({
                                                 id={task.id}
                                                 value={localTasks[task.id] ?? task.todo}
                                                 onChange={handleTaskChange}
-                                                autocomplete="off"
+                                                autoComplete="off"
                                                 className={`bg-inherit mx-[3.3vw] pb-[0.2vw] w-[11vw] border-b-[0.13vw] border-neutral-500 outline-none ${isOld ? "text-neutral-500" : "text-black"}`}
                                             />
                                         </div>

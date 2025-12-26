@@ -40,8 +40,11 @@ class TaskBase(BaseModel):
     checked: bool = False
 
 
-class UpdateDeadline(BaseModel):
+class UpdateDlName(BaseModel):
     name: str
+
+
+class UpdateDlDue(BaseModel):
     due: datetime
 
 
@@ -159,13 +162,17 @@ async def get_deadlines(course_id: int, db: db_dependency):
     ] or "No deadlines found"
 
 
-@app.put("/deadlines/{dl_id}")
-async def update_deadline(dl_id: int, new: DeadlineBase, db: db_dependency):
+@app.put("/deadlines/{dl_id}/name")
+async def update_dl_name(dl_id: int, update: UpdateDlName, db: db_dependency):
     prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
+    prev.name = update.name
+    db.commit()
 
-    prev.name = new.name
-    prev.due = new.due
 
+@app.put("/deadlines/{dl_id}/due")
+async def update_dl_due(dl_id: int, update: UpdateDlDue, db: db_dependency):
+    prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
+    prev.due = update.due
     db.commit()
 
 

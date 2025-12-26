@@ -20,7 +20,7 @@ export default function CourseForm({ addCourse }) {
                 value={courseName}
                 onChange={e => setCourseName(e.target.value)}
                 placeholder="Enter course name..."
-                autocomplete="off"
+                autoComplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
             />
 
@@ -29,7 +29,7 @@ export default function CourseForm({ addCourse }) {
                     type="number"
                     value={credits}
                     onChange={e => setCredits(+e.target.value)}
-                    autocomplete="off"
+                    autoComplete="off"
                     className="bg-inherit w-[4vw] placeholder-stone-600 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]"
                 />
 

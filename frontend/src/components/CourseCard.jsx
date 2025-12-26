@@ -1,15 +1,14 @@
-import { useState } from "react";
 import Slides from "./Slides";
 
 export default function CourseCard({
     course,
     deadlines,
     tasks,
+    slide,
+    setSlide,
     setEdit,
     updateChecked
 }) {
-    const [slide, setSlide] = useState(0);
-
     const toDate = (dlArr) => {
         if (!Array.isArray(dlArr) || dlArr.length < 3) return null;
         return new Date(dlArr[2], dlArr[1] - 1, dlArr[0]);

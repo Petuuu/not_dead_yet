@@ -35,7 +35,7 @@ export default function DeadlineForm({ addDeadline, courses }) {
                 value={deadlineName}
                 onChange={e => setDeadlineName(e.target.value)}
                 placeholder="Enter deadline name..."
-                autocomplete="off"
+                autoComplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
             />
 
