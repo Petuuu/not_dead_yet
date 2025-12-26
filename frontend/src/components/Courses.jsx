@@ -174,7 +174,7 @@ export default function Courses() {
                 })}
             </div>
 
-            <div className="flex flex-wrap">
+            <div className="bg-slate-300 bg-opacity-70 flex flex-wrap mx-[5vw] mb-[3vw] rounded-[1vw]">
                 <CourseForm addCourse={addCourse} />
                 <DeadlineForm addDeadline={addDeadline} courses={courses} />
                 <TaskForm addTask={addTask} courses={courses} deadlines={deadlines} />

@@ -15,7 +15,7 @@ export default function DeadlineForm({ addDeadline, courses }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[40vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[3vw] py-[0.5vw] w-[40vw]">
             <select
                 value={courseId}
                 onChange={e => setCourseId(+e.target.value)}

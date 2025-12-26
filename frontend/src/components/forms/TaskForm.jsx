@@ -18,7 +18,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[5vw] py-[0.5vw] w-[38vw]">
+        <form onSubmit={handleSubmit} className="flex items-center border-b-[0.13vw] border-teal-500 m-[3vw] py-[0.5vw] w-[38vw]">
             <select
                 value={courseId}
                 onChange={e => setCourseId(+e.target.value)}
