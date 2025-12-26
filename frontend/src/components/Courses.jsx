@@ -48,7 +48,7 @@ export default function Courses() {
     async function addCourse(courseName, credits) {
         try {
             await api.post("/courses/", { name: courseName, credits: credits });
-            fetchAll();
+            await fetchAll();
         }
         catch (e) {
             console.error("Error adding course:", e)
@@ -59,7 +59,7 @@ export default function Courses() {
     async function addDeadline(courseId, name, due_date) {
         try {
             await api.post("/deadlines/", { course: courseId, name: name, due: due_date });
-            fetchAll();
+            await fetchAll();
         }
         catch (e) {
             console.error("Error adding deadline:", e);
@@ -69,7 +69,7 @@ export default function Courses() {
     async function addTask(courseId, deadlineId, todo) {
         try {
             await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo });
-            fetchAll();
+            await fetchAll();
         }
         catch (e) {
             console.error("Error adding task:", e)
@@ -78,8 +78,19 @@ export default function Courses() {
 
     async function updateChecked(taskId, checked) {
         try {
-            await api.put(`/tasks/${taskId}`, null, { params: { checked } });
-            fetchAll();
+            await api.put(`/tasks/${taskId}/checked`, { checked: checked });
+            await fetchAll();
+        }
+        catch (e) {
+            console.error(`Error updating task ${taskId}:`, e);
+        }
+    }
+
+    async function updateTodo(taskId, todo) {
+        try {
+            console.log(taskId);
+            console.log(todo);
+            await api.put(`/tasks/${taskId}/todo`, { todo: todo });
         }
         catch (e) {
             console.error(`Error updating task ${taskId}:`, e);
@@ -101,8 +112,9 @@ export default function Courses() {
                             course={course}
                             deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                             tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
-                            setTasks={setTasks}
                             setEdit={setEdit}
+                            updateTodo={updateTodo}
+                            fetchAll={fetchAll}
                             />
                         );
                     }
@@ -113,7 +125,6 @@ export default function Courses() {
                         course={course}
                         deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                         tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
-                        setTasks={setTasks}
                         updateChecked={updateChecked}
                         setEdit={setEdit}
                         />

@@ -1,8 +1,9 @@
 import { useState } from "react";
 import Slides from "./Slides";
 
-export default function EditCard({ course, deadlines, tasks, setEdit }) {
+export default function EditCard({ course, deadlines, tasks, setEdit, updateTodo, fetchAll }) {
     const [slide, setSlide] = useState(0);
+    const [localTasks, setLocalTasks] = useState({});
 
     const toDate = (dlArr) => {
         if (!Array.isArray(dlArr) || dlArr.length < 3) return null;
@@ -23,10 +24,17 @@ export default function EditCard({ course, deadlines, tasks, setEdit }) {
     let hasCurr = false;
 
     function handleTaskChange(e) {
-        console.log(e.target.value);
         const id = +e.target.id;
-        const task = tasks.find(t => t.id === id);
-        task.todo = e.target.value;
+        const todo = e.target.value;
+        setLocalTasks(prev => ({ ...prev, [id]: todo }));
+    }
+
+    async function handleClick() {
+        for (const [taskId, todo] of Object.entries(localTasks)) {
+            await updateTodo(+taskId, todo);
+        }
+        await fetchAll();
+        setEdit(prev => ({ ...prev, [course.id]: false }));
     }
 
     return (
@@ -34,7 +42,7 @@ export default function EditCard({ course, deadlines, tasks, setEdit }) {
             <div className="flex items-center justify-between mr-[1vw]">
                 <h1 className="mx-[1vw] font-bold"> {course.name} ({course.credits} op) </h1>
 
-                <button onClick={() => setEdit(prev => ({ ...prev, [course.id]: false }))}>
+                <button onClick={handleClick}>
                     <img src="/check.png" alt="edit" className="size-[1.1vw]" />
                 </button>
             </div>
@@ -101,7 +109,7 @@ export default function EditCard({ course, deadlines, tasks, setEdit }) {
                                             <input
                                                 type="text"
                                                 id={task.id}
-                                                value={task.todo}
+                                                value={localTasks[task.id] ?? task.todo}
                                                 onChange={handleTaskChange}
                                                 className={`bg-inherit mx-[3.3vw] pb-[0.2vw] w-[11vw] border-b-[0.13vw] border-neutral-500 peer-checked:line-through peer-checked:text-neutral-400 outline-none ${isOld ? "text-neutral-500" : "text-black"}`}
                                             />

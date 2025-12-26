@@ -40,6 +40,14 @@ class TaskBase(BaseModel):
     checked: bool = False
 
 
+class CheckedUpdate(BaseModel):
+    checked: bool
+
+
+class TodoUpdate(BaseModel):
+    todo: str
+
+
 def get_db():
     db = SessionLocal()
     try:
@@ -257,10 +265,17 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
     ] or "No tasks found"
 
 
-@app.put("/tasks/{task_id}")
-async def update_checked(task_id: int, checked: bool, db: db_dependency):
+@app.put("/tasks/{task_id}/checked")
+async def update_checked(task_id: int, update: CheckedUpdate, db: db_dependency):
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
-    prev.checked = checked
+    prev.checked = update.checked
+    db.commit()
+
+
+@app.put("/tasks/{task_id}/todo")
+async def update_todo(task_id: int, update: TodoUpdate, db: db_dependency):
+    prev = db.query(Tasks).filter(Tasks.id == task_id).first()
+    prev.todo = update.todo
     db.commit()
 
 

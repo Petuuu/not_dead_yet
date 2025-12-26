@@ -22,10 +22,10 @@ export default function CourseCard({ course, deadlines, tasks, updateChecked, se
     let tasksOutput = true;
     let hasCurr = false;
 
-    function handleChange(e) {
+    async function handleChange(e) {
         const id = +e.target.id;
         const task = tasks.find(t => t.id === id);
-        updateChecked(id, !task.checked);
+        await updateChecked(id, !task.checked);
     }
 
     return (
