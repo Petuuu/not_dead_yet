@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Slides from "./Slides";
 
-export default function CourseCard({ course, deadlines, tasks, updateChecked, setEdit }) {
+export default function EditCard({ course, deadlines, tasks, setEdit }) {
     const [slide, setSlide] = useState(0);
 
     const toDate = (dlArr) => {
@@ -22,10 +22,11 @@ export default function CourseCard({ course, deadlines, tasks, updateChecked, se
     let tasksOutput = true;
     let hasCurr = false;
 
-    function handleChange(e) {
+    function handleTaskChange(e) {
+        console.log(e.target.value);
         const id = +e.target.id;
         const task = tasks.find(t => t.id === id);
-        updateChecked(id, !task.checked);
+        task.todo = e.target.value;
     }
 
     return (
@@ -33,8 +34,8 @@ export default function CourseCard({ course, deadlines, tasks, updateChecked, se
             <div className="flex items-center justify-between mr-[1vw]">
                 <h1 className="mx-[1vw] font-bold"> {course.name} ({course.credits} op) </h1>
 
-                <button onClick={() => setEdit(prev => ({ ...prev, [course.id]: true }))}>
-                    <img src="/edit.png" alt="edit" className="size-[0.9vw] opacity-60" />
+                <button onClick={() => setEdit(prev => ({ ...prev, [course.id]: false }))}>
+                    <img src="/check.png" alt="edit" className="size-[1.1vw]" />
                 </button>
             </div>
 
@@ -97,19 +98,13 @@ export default function CourseCard({ course, deadlines, tasks, updateChecked, se
                                     return (
                                         <div key={task.id}>
                                             {shouldInsert && <hr className="mx-[1vw] mb-[1vw] border-neutral-800" />}
-                                            <div className="flex items-center mx-[1vw]">
-                                                <input
-                                                    type="checkbox"
-                                                    id={task.id}
-                                                    checked={task.checked}
-                                                    onChange={handleChange}
-                                                    className="peer size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
-                                                />
-
-                                                <label className={`mx-[1vw] peer-checked:line-through peer-checked:text-neutral-400 ${isOld ? "text-neutral-500" : "text-black"}`}>
-                                                    {task.todo}
-                                                </label>
-                                            </div>
+                                            <input
+                                                type="text"
+                                                id={task.id}
+                                                value={task.todo}
+                                                onChange={handleTaskChange}
+                                                className={`bg-inherit mx-[3.3vw] pb-[0.2vw] w-[11vw] border-b-[0.13vw] border-neutral-500 peer-checked:line-through peer-checked:text-neutral-400 outline-none ${isOld ? "text-neutral-500" : "text-black"}`}
+                                            />
                                         </div>
                                     );
                                 }

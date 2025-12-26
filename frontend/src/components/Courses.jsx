@@ -3,6 +3,7 @@ import api from "../api";
 import CourseCard from "./CourseCard";
 import CourseForm from "./forms/CourseForm";
 import DeadlineForm from "./forms/DeadlineForm";
+import EditCard from "./EditCard"
 import TaskForm from "./forms/TaskForm";
 
 export default function Courses() {
@@ -93,7 +94,18 @@ export default function Courses() {
         <>
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
                 {courses.map(course => {
-                    if (edit[course.id]) return <p key={course.id}> miu </p>;
+                    if (edit[course.id]) {
+                        return (
+                            <EditCard
+                            key={course.id}
+                            course={course}
+                            deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
+                            tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
+                            setTasks={setTasks}
+                            setEdit={setEdit}
+                            />
+                        );
+                    }
 
                     return (
                         <CourseCard
@@ -102,7 +114,7 @@ export default function Courses() {
                         deadlines={Array.isArray(deadlines[course.id]) ? deadlines[course.id] : []}
                         tasks={Array.isArray(tasks[course.id]) ? tasks[course.id] : []}
                         setTasks={setTasks}
-                        updateTask={updateChecked}
+                        updateChecked={updateChecked}
                         setEdit={setEdit}
                         />
                     );

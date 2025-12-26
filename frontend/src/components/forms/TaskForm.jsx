@@ -22,7 +22,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
             <select
                 value={courseId}
                 onChange={e => setCourseId(+e.target.value)}
-                className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 leading-tight focus:outline-none"
+                className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 focus:outline-none"
             >
 
                 <option value={0} className="bg-[rgb(208,219,239)]"> Select a course </option>
@@ -36,7 +36,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
             <select
                 value={deadlineId}
                 onChange={e => setDeadlineId(+e.target.value)}
-                className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 leading-tight focus:outline-none"
+                className="bg-inherit w-[10vw] mr-[1vw] placeholder-stone-600 focus:outline-none"
                 disabled={courseId === 0}
             >
 
@@ -53,7 +53,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
                 value={todo}
                 onChange={e => setTodo(e.target.value)}
                 placeholder="Enter task name..."
-                className="bg-inherit w-[10vw] placeholder-stone-600 leading-tight focus:outline-none"
+                className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
             />
 
             <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-[0.4vw] text-white py-[0.25vw] px-[0.4vw] rounded">

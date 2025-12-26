@@ -193,6 +193,7 @@ async def get_all_tasks(db: db_dependency):
         )
         .join(Courses, Tasks.course == Courses.id)
         .join(Deadlines, Tasks.deadline == Deadlines.id)
+        .order_by(Courses.id, Deadlines.due, Tasks.id)
         .all()
     )
 
@@ -221,6 +222,7 @@ async def get_course_tasks(course_id: int, db: db_dependency):
         )
         .join(Deadlines, Tasks.deadline == Deadlines.id)
         .filter(Tasks.course == course_id)
+        .order_by(Deadlines.due, Tasks.id)
         .all()
     )
 
@@ -241,6 +243,7 @@ async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
     tasks = (
         db.query(Tasks.id, Tasks.todo, Tasks.checked)
         .filter(Tasks.course == course_id, Tasks.deadline == dl_id)
+        .order_by(Tasks.id)
         .all()
     )
 

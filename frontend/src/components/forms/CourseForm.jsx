@@ -20,7 +20,7 @@ export default function CourseForm({ addCourse }) {
                 value={courseName}
                 onChange={e => setCourseName(e.target.value)}
                 placeholder="Enter course name..."
-                className="bg-inherit w-[10vw] placeholder-stone-600 leading-tight focus:outline-none"
+                className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
             />
 
             <div className="relative inline-flex items-center">
@@ -28,21 +28,21 @@ export default function CourseForm({ addCourse }) {
                     type="number"
                     value={credits}
                     onChange={e => setCredits(+e.target.value)}
-                    className="bg-inherit w-[4vw] placeholder-stone-600 leading-tight focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]"
+                    className="bg-inherit w-[4vw] placeholder-stone-600 focus:outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none [appearance:textfield]"
                 />
 
                 <div className="absolute right-0 top-1/2 -translate-y-1/2 flex flex-col mr-[0.8vw]">
                     <button
                         type="button"
                         onClick={() => setCredits(c => c + 1)}
-                        className="bg-inherit text-stone-600 leading-none text-[0.7vw] hover:opacity-70"
+                        className="bg-inherit text-stone-600 text-[0.7vw] hover:opacity-70"
                     >
                     ▲
                     </button>
                     <button
                         type="button"
                         onClick={() => setCredits(c => Math.max(0, c - 1))}
-                        className="bg-inherit text-stone-600 leading-none text-[0.7vw] hover:opacity-70"
+                        className="bg-inherit text-stone-600 text-[0.7vw] hover:opacity-70"
                     >
                     ▼
                     </button>

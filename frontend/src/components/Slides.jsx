@@ -1,15 +1,13 @@
-export default function DeadlineSlides({ deadlines, slide, setSlide, setDeadlineId }) {
+export default function DeadlineSlides({ deadlines, slide, setSlide }) {
     function prevSlide() {
         const newSlide = slide === 0 ? 0 : slide - 1;
         setSlide(newSlide);
-        setDeadlineId(deadlines[newSlide].id);
     };
 
     function nextSlide() {
         const len = deadlines.length;
         const newSlide = slide === len - 1 ? len - 1 : slide + 1;
         setSlide(newSlide);
-        setDeadlineId(deadlines[newSlide].id);
     };
 
     return (
