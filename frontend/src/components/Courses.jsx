@@ -18,26 +18,24 @@ export default function Courses() {
             const res = await api.get("/courses/");
             setCourses(res.data);
 
-            for (const course of res.data) {
+            for (const c of res.data) {
                 try {
-                    const dlsRes = await api.get(`/deadlines/${course.id}`);
-                    setDeadlines(prev => ({ ...prev, [course.id]: dlsRes.data }));
+                    const dlsRes = await api.get(`/deadlines/${c.id}`);
+                    setDeadlines(prev => ({ ...prev, [c.id]: dlsRes.data }));
                 }
                 catch (e) {
-                    console.error(`Error fetching deadlines for course ${course.id}:`, e);
-                    setDeadlines(prev => ({ ...prev, [course.id]: [] }));
+                    console.error(`Error fetching deadlines for course ${c.id}:`, e);
+                    setDeadlines(prev => ({ ...prev, [c.id]: [] }));
                 }
 
                 try {
-                    const tasksRes = await api.get(`/tasks/${course.id}`);
-                    setTasks(prev => ({ ...prev, [course.id]: tasksRes.data }));
+                    const tasksRes = await api.get(`/tasks/${c.id}`);
+                    setTasks(prev => ({ ...prev, [c.id]: tasksRes.data }));
                 }
                 catch (e) {
-                    console.error(`Error fetching tasks for course ${course.id}:`, e);
-                    setTasks(prev => ({ ...prev, [course.id]: [] }));
+                    console.error(`Error fetching tasks for course ${c.id}:`, e);
+                    setTasks(prev => ({ ...prev, [c.id]: [] }));
                 }
-
-                setEdit(prev => ({ ...prev, [course.id]: false }))
             }
         }
         catch (e) {
@@ -163,6 +161,7 @@ export default function Courses() {
 
     async function load() {
         await fetchAll();
+        courses.forEach(c => setEdit(prev => ({ ...prev, [c.id]: false })));
         initSlides();
     }
 
