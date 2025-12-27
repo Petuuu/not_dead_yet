@@ -127,7 +127,7 @@ export default function EditCard({
                         onChange={e => setLocalCourse(prev => ({ ...prev, credits: e.target.value }))}
                         autoComplete="off"
                         className={"bg-inherit pb-[0.2vw] w-[1vw] text-center border-b-[0.13vw] border-neutral-500 outline-none"}
-                    /> op)
+                    /> ECTS)
                 </h1>
 
                 <div className="flex gap-[0.5vw] items-center">
