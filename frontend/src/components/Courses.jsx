@@ -9,7 +9,7 @@ import TaskForm from "./forms/TaskForm";
 
 export default function Courses() {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const { id: value } = useParams();
     const [courses, setCourses] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
     const [tasks, setTasks] = useState([]);
@@ -19,13 +19,13 @@ export default function Courses() {
 
     async function fetchAll() {
         try {
-            const res = await api.get("/courses/");
+            const res = await api.get(`/courses/${value}`);
             const coursesData = Array.isArray(res.data) ? res.data : [];
             setCourses(coursesData);
 
             for (const c of coursesData) {
                 try {
-                    const dlsRes = await api.get(`/deadlines/${c.id}`);
+                    const dlsRes = await api.get(`/deadlines/${value}/${c.id}`);
                     setDeadlines(prev => ({ ...prev, [c.id]: Array.isArray(dlsRes.data) ? dlsRes.data : [] }));
                 }
                 catch (e) {
@@ -34,7 +34,7 @@ export default function Courses() {
                 }
 
                 try {
-                    const tasksRes = await api.get(`/tasks/${c.id}`);
+                    const tasksRes = await api.get(`/tasks/${value}/${c.id}`);
                     setTasks(prev => ({ ...prev, [c.id]: Array.isArray(tasksRes.data) ? tasksRes.data : [] }));
                 }
                 catch (e) {
@@ -51,7 +51,7 @@ export default function Courses() {
 
     async function addCourse(courseName, credits) {
         try {
-            await api.post("/courses/", { name: courseName, credits: credits });
+            await api.post("/courses/", { name: courseName, credits: credits }, { params: { tracker: value } });
             await fetchAll();
         }
         catch (e) {
@@ -61,7 +61,7 @@ export default function Courses() {
 
     async function addDeadline(courseId, name, due_date) {
         try {
-            await api.post("/deadlines/", { course: courseId, name: name, due: due_date });
+            await api.post("/deadlines/", { course: courseId, name: name, due: due_date }, { params: { tracker: value } });
             await fetchAll();
         }
         catch (e) {
@@ -81,7 +81,7 @@ export default function Courses() {
 
     async function addTask(courseId, deadlineId, todo) {
         try {
-            await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo });
+            await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo }, { params: { tracker: value } });
             await fetchAll();
         }
         catch (e) {
@@ -168,10 +168,11 @@ export default function Courses() {
 
     async function load() {
         try {
-            const res = await api.get("/courses/");
-            setCourses(res.data);
-            res.data.forEach(c => setEdit(prev => ({ ...prev, [c.id]: false })));
-            res.data.forEach(c => setSlide(prev => ({ ...prev, [c.id]: 0 })));
+            const res = await api.get(`/courses/${value}`);
+            const coursesData = Array.isArray(res.data) ? res.data : [];
+            setCourses(coursesData);
+            coursesData.forEach(c => setEdit(prev => ({ ...prev, [c.id]: false })));
+            coursesData.forEach(c => setSlide(prev => ({ ...prev, [c.id]: 0 })));
         } catch (e) {
             console.error("Error loading courses:", e);
             setCourses([]);
@@ -181,11 +182,11 @@ export default function Courses() {
     async function createTracker() {
         try {
             const res = await api.post("/trackers/");
-            const trackerId = res?.data?.value;
+            const trackerValue = res?.data?.value;
 
-            if (trackerId) {
+            if (trackerValue) {
                 setValid(true);
-                navigate(`/${trackerId}`);
+                navigate(`/${trackerValue}`);
             }
         }
         catch (e) {
@@ -199,28 +200,32 @@ export default function Courses() {
     }
 
     async function getTrackers() {
-        if (!id) return;
+        if (!value) return;
 
         try {
-            await api.get(`/trackers/${id}`);
-            setValid(true);
+            await api.get(`/trackers/${value}`);
             await fetchAll();
             await load();
+            setValid(true);
         }
         catch (e) {
-            console.error(`Error validating tracker ${id}:`, e);
+            console.error(`Error validating tracker ${value}:`, e);
             setValid(false);
         }
     }
 
     async function deleteTracker() {
-        try {
-            await api.delete(`/trackers/${id}`);
-            setValid(false);
-            navigate("/");
-        }
-        catch (e) {
-            console.error(`Error deleting tracker ${id}:`, e);
+        const text = "Are you sure you want to delete current tracker?";
+
+        if (window.confirm(text)) {
+            try {
+                await api.delete(`/trackers/${value}`);
+                setValid(false);
+                navigate("/");
+            }
+            catch (e) {
+                console.error(`Error deleting tracker ${value}:`, e);
+            }
         }
     }
 
@@ -230,7 +235,7 @@ export default function Courses() {
         getTrackers();
     }, []);
 
-    if (id && valid) return (
+    if (value && valid) return (
         <>
             <button
                 onClick={() => navigate("/")}

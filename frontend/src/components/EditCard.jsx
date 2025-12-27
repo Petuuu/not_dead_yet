@@ -182,7 +182,7 @@ export default function EditCard({
                         </p>
 
                         <div className="flex gap-[0.5vw] items-center">
-                            <button onClick={() => handleDelete("course", course.id, course.name)}>
+                            <button onClick={() => handleDelete("deadline", currDl.id, currDl.name)}>
                                 <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
                             </button>
 
@@ -222,7 +222,7 @@ export default function EditCard({
                             </div>
 
                             <div className="flex gap-[0.5vw] items-center">
-                                <button onClick={() => handleDelete("course", course.id, course.name)}>
+                                <button onClick={() => handleDelete("deadline", currDl.id, currDl.name)}>
                                     <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
                                 </button>
 

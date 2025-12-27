@@ -136,13 +136,13 @@ async def get_trackers(db: db_dependency):
     return db.query(Trackers).order_by(Trackers.id).all() or "No trackers found"
 
 
-@app.get("/trackers/{value}")
-async def get_tracker(value: str, db: db_dependency):
-    tracker = db.query(Trackers).filter(Trackers.value == value).first()
+@app.get("/trackers/{tracker}")
+async def get_tracker(tracker: str, db: db_dependency):
+    tracker = db.query(Trackers).filter(Trackers.value == tracker).first()
     if tracker is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
-    return {"id": tracker.id, "value": tracker.value} or "No trackers found"
+    return tracker.id or "No tracker found"
 
 
 @app.delete("/trackers/{tracker}")
@@ -158,14 +158,31 @@ async def delete_tracker(tracker: str, db: db_dependency):
 
 @app.post("/courses/")
 async def add_course(tracker: str, course: CourseBase, db: db_dependency):
-    db_course = Courses(name=course.name, credits=course.credits)
+    db_course = Courses(tracker=tracker, name=course.name, credits=course.credits)
     db.add(db_course)
     db.commit()
 
 
 @app.get("/courses/")
 async def get_courses(db: db_dependency):
-    courses = db.query(Courses).order_by(Courses.id).all()
+    courses = db.query(Courses).order_by(Courses.tracker, Courses.id).all()
+
+    return [
+        {
+            "id": c.id,
+            "tracker": c.tracker,
+            "name": c.name,
+            "credits": c.credits,
+        }
+        for c in courses
+    ] or "No courses found"
+
+
+@app.get("/courses/{tracker}")
+async def get_tracker_courses(tracker: str, db: db_dependency):
+    courses = (
+        db.query(Courses).filter(Courses.tracker == tracker).order_by(Courses.id).all()
+    )
 
     return [
         {
@@ -198,8 +215,8 @@ async def delete_course(course_id: int, db: db_dependency):
 
 
 @app.post("/deadlines/")
-async def add_deadline(dl: DeadlineBase, db: db_dependency):
-    deadline = Deadlines(course=dl.course, name=dl.name, due=dl.due)
+async def add_deadline(tracker: str, dl: DeadlineBase, db: db_dependency):
+    deadline = Deadlines(tracker=tracker, course=dl.course, name=dl.name, due=dl.due)
     db.add(deadline)
     db.commit()
 
@@ -207,7 +224,7 @@ async def add_deadline(dl: DeadlineBase, db: db_dependency):
 @app.post("/deadlines/{dl_id}")
 async def duplicate_deadline(dl_id: int, db: db_dependency):
     dl = (
-        db.query(Deadlines.course, Deadlines.name, Deadlines.due)
+        db.query(Deadlines.tracker, Deadlines.course, Deadlines.name, Deadlines.due)
         .filter(Deadlines.id == dl_id)
         .first()
     )
@@ -234,29 +251,36 @@ async def duplicate_deadline(dl_id: int, db: db_dependency):
     new_name += str(as_int + 1)
     new_due = dl.due + timedelta(days=7)
 
-    new_dl = Deadlines(course=dl.course, name=new_name, due=new_due)
+    new_dl = Deadlines(tracker=dl.tracker, course=dl.course, name=new_name, due=new_due)
     db.add(new_dl)
     db.commit()
     db.refresh(new_dl)
 
     for t in tasks:
-        await add_task(Tasks(course=dl.course, deadline=new_dl.id, todo=t.todo), db)
+        await add_task(
+            dl.tracker, Tasks(course=dl.course, deadline=new_dl.id, todo=t.todo), db
+        )
 
 
 @app.get("/deadlines/")
 async def get_all_deadlines(db: db_dependency):
     dls = (
         db.query(
-            Deadlines.id, Courses.name.label("course"), Deadlines.name, Deadlines.due
+            Deadlines.id,
+            Deadlines.tracker,
+            Courses.name.label("course"),
+            Deadlines.name,
+            Deadlines.due,
         )
         .join(Courses, Deadlines.course == Courses.id)
-        .order_by(Courses.id, Deadlines.due, Deadlines.id)
+        .order_by(Deadlines.tracker, Courses.id, Deadlines.due, Deadlines.id)
         .all()
     )
 
     return [
         {
             "id": d.id,
+            "tracker": d.tracker,
             "course": d.course,
             "name": d.name,
             "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
@@ -265,12 +289,39 @@ async def get_all_deadlines(db: db_dependency):
     ] or "No deadlines found"
 
 
-@app.get("/deadlines/{course_id}")
-async def get_deadlines(course_id: int, db: db_dependency):
+@app.get("/deadlines/{tracker}")
+async def get_all_deadlines(tracker: str, db: db_dependency):
     dls = (
-        db.query(Deadlines)
+        db.query(
+            Deadlines.id,
+            Courses.name.label("course"),
+            Deadlines.name,
+            Deadlines.due,
+        )
+        .join(Courses, Deadlines.course == Courses.id)
+        .filter(Deadlines.tracker == tracker)
+        .order_by(Courses.id, Deadlines.due, Deadlines.id)
+        .all()
+    )
+
+    return [
+        {
+            "id": d.id,
+            "tracker": d.tracker,
+            "course": d.course,
+            "name": d.name,
+            "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
+        }
+        for d in dls
+    ] or "No deadlines found"
+
+
+@app.get("/deadlines/{tracker}/{course_id}")
+async def get_deadlines(tracker: str, course_id: int, db: db_dependency):
+    dls = (
+        db.query(Deadlines.id, Deadlines.name, Deadlines.due)
+        .filter(Deadlines.tracker == tracker, Deadlines.course == course_id)
         .order_by(Deadlines.due, Deadlines.id)
-        .filter(Deadlines.course == course_id)
         .all()
     )
 
@@ -311,8 +362,9 @@ async def delete_deadlines(dl_id: int, db: db_dependency):
 
 
 @app.post("/tasks/")
-async def add_task(task: TaskBase, db: db_dependency):
+async def add_task(tracker: str, task: TaskBase, db: db_dependency):
     db_task = Tasks(
+        tracker=tracker,
         course=task.course,
         deadline=task.deadline,
         todo=task.todo,
@@ -327,6 +379,7 @@ async def get_all_tasks(db: db_dependency):
     tasks = (
         db.query(
             Tasks.id,
+            Tasks.tracker,
             Courses.name.label("course"),
             Deadlines.name.label("deadline"),
             Deadlines.due.label("dlDue"),
@@ -335,6 +388,38 @@ async def get_all_tasks(db: db_dependency):
         )
         .join(Courses, Tasks.course == Courses.id)
         .join(Deadlines, Tasks.deadline == Deadlines.id)
+        .order_by(Tasks.tracker, Courses.id, Deadlines.due, Deadlines.id, Tasks.id)
+        .all()
+    )
+
+    return [
+        {
+            "id": t.id,
+            "tracker": t.tracker,
+            "course": t.course,
+            "deadline": t.deadline,
+            "dlDue": [t.dlDue.day, t.dlDue.month, t.dlDue.year],
+            "todo": t.todo,
+            "checked": t.checked,
+        }
+        for t in tasks
+    ] or "No tasks found"
+
+
+@app.get("/tasks/{tracker}")
+async def get_all_tasks(tracker: str, db: db_dependency):
+    tasks = (
+        db.query(
+            Tasks.id,
+            Courses.name.label("course"),
+            Deadlines.name.label("deadline"),
+            Deadlines.due.label("dlDue"),
+            Tasks.todo,
+            Tasks.checked,
+        )
+        .join(Courses, Tasks.course == Courses.id)
+        .join(Deadlines, Tasks.deadline == Deadlines.id)
+        .filter(Tasks.tracker == tracker)
         .order_by(Courses.id, Deadlines.due, Deadlines.id, Tasks.id)
         .all()
     )
@@ -352,8 +437,8 @@ async def get_all_tasks(db: db_dependency):
     ] or "No tasks found"
 
 
-@app.get("/tasks/{course_id}")
-async def get_course_tasks(course_id: int, db: db_dependency):
+@app.get("/tasks/{tracker}/{course_id}")
+async def get_course_tasks(tracker: str, course_id: int, db: db_dependency):
     tasks = (
         db.query(
             Tasks.id,
@@ -363,8 +448,8 @@ async def get_course_tasks(course_id: int, db: db_dependency):
             Tasks.checked,
         )
         .join(Deadlines, Tasks.deadline == Deadlines.id)
-        .filter(Tasks.course == course_id)
-        .order_by(Deadlines.due, Tasks.id)
+        .filter(Tasks.tracker == tracker, Tasks.course == course_id)
+        .order_by(Deadlines.due, Deadlines.id, Tasks.id)
         .all()
     )
 
@@ -380,11 +465,13 @@ async def get_course_tasks(course_id: int, db: db_dependency):
     ] or "No tasks found"
 
 
-@app.get("/tasks/{course_id}/{dl_id}")
-async def get_tasks(course_id: int, dl_id: int, db: db_dependency):
+@app.get("/tasks/{tracker}/{course_id}/{dl_id}")
+async def get_tasks(tracker: str, course_id: int, dl_id: int, db: db_dependency):
     tasks = (
         db.query(Tasks.id, Tasks.todo, Tasks.checked)
-        .filter(Tasks.course == course_id, Tasks.deadline == dl_id)
+        .filter(
+            Tasks.tracker == tracker, Tasks.course == course_id, Tasks.deadline == dl_id
+        )
         .order_by(Tasks.id)
         .all()
     )
