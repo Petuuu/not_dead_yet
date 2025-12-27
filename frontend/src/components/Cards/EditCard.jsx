@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Slides from "./Slides";
+import Slides from "../Slides";
 
 export default function EditCard({
     course,

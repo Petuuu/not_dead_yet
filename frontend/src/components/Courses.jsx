@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
-import CourseCard from "./CourseCard";
+import CourseCard from "./Cards/CourseCard";
 import CourseForm from "./forms/CourseForm";
 import DeadlineForm from "./forms/DeadlineForm";
-import EditCard from "./EditCard"
+import EditCard from "./Cards/EditCard"
 import TaskForm from "./forms/TaskForm";
+import Instructions from "./Instructions";
 
 export default function Courses() {
     const navigate = useNavigate();
@@ -322,6 +323,8 @@ export default function Courses() {
             >
                 +
             </button>
+
+            <Instructions />
         </div>
     )
 }
