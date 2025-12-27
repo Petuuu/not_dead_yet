@@ -8,7 +8,7 @@ export default function Instructions() {
 
                 <p className="text-[1.2vw] mx-[2vw] my-[1vw]">
                     Trackers are created by clicking the teal + button. Each tracker is identified by a unique, automatically
-                    generated 10-character ID. You can access a tracker by appending this ID to the end of the URL, as shown below:
+                    generated 16-character ID. You can access a tracker by appending this ID to the end of the URL, as shown below:
                 </p>
 
                 <code className="text-[1.2vw] ml-[2vw] pl-[2vw]"> https://not-dead-yet.vercel.app/*YOUR-ID-HERE* </code>
