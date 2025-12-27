@@ -167,9 +167,15 @@ export default function EditCard({
                             />
                         </p>
 
-                        <button onClick={() => handleDelete("deadline", currDl.id, currDl.name)}>
-                            <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
-                        </button>
+                        <div className="flex gap-[0.5vw] items-center">
+                            <button onClick={() => handleDelete("course", course.id, course.name)}>
+                                <img src="/delete.png" alt="delete" className="size-[1vw] opacity-85" />
+                            </button>
+
+                            <button onClick={() => duplicateDl(currDl.id)}>
+                                <img src="/duplicate.png" alt="confirm" className="size-[1.1vw]" />
+                            </button>
+                        </div>
                     </div>
 
                 ) : (
