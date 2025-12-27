@@ -14,7 +14,7 @@ export default function Instructions() {
                 <code className="text-[1.2vw] ml-[2vw] pl-[2vw]"> https://not-dead-yet.vercel.app/*YOUR-ID-HERE* </code>
 
                 <p className="text-[1.2vw] mx-[2vw] mt-[1vw] mb-[2vw]">
-                    As this ID grants direct access to the tracker, it must be remembered and kept secure.
+                    As this ID grants direct access to the tracker, <b> it must be remembered and kept secure. </b>
                 </p>
             </div>
 
