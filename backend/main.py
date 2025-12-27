@@ -1,14 +1,18 @@
-from fastapi import FastAPI, status, Response, Request, Depends
+from fastapi import FastAPI, status, Response, Request, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from typing import Annotated
+from secrets import token_urlsafe
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from time import time
+from dotenv import load_dotenv
+import os
 from db import engine, SessionLocal
-from models import Base, Courses, Deadlines, Tasks
+from models import Base, Courses, Deadlines, Tasks, Trackers
 
+load_dotenv()
 Base.metadata.create_all(bind=engine)
 
 
@@ -27,16 +31,19 @@ origins = [
     "https://not-dead-yet.vercel.app",
 ]
 
-app = FastAPI()
+app = FastAPI(docs_url=os.environ.get("URL_DOCS"))
 app.add_middleware(TimingMiddleware)
 app.add_middleware(
     CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
 )
 
 
-class Users(BaseModel):
-    uname: str
-    password: str
+TRACKER_COOLDOWN_SECONDS = 10
+_last_tracker_creation: dict[str, float] = {}
+
+
+class TrackerBase(BaseModel):
+    value: str
 
 
 class CourseBase(BaseModel):
@@ -87,12 +94,70 @@ db_dependency = Annotated[Session, Depends(get_db)]
 
 
 ############
+# TRACKERS
+############
+
+
+def _client_key(request: Request) -> str:
+    if request.client and request.client.host:
+        return request.client.host
+    return "unknown"
+
+
+@app.post("/trackers/")
+async def create_tracker(request: Request, db: db_dependency):
+    client_key = _client_key(request)
+    print(client_key)
+    now = time()
+    last_created = _last_tracker_creation.get(client_key, 0)
+    elapsed = now - last_created
+
+    if elapsed < TRACKER_COOLDOWN_SECONDS:
+        retry_after = int(TRACKER_COOLDOWN_SECONDS - elapsed + 0.999)
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Tracker creation is limited to one every 10 seconds.",
+            headers={"Retry-After": str(retry_after)},
+        )
+
+    value = token_urlsafe(32)
+    tracker = Trackers(value=value)
+    db.add(tracker)
+    db.commit()
+    db.refresh(tracker)
+
+    _last_tracker_creation[client_key] = now
+
+    return {"id": tracker.id, "value": tracker.value}
+
+
+@app.get("/trackers/")
+async def get_trackers(db: db_dependency):
+    return db.query(Trackers).order_by(Trackers.id).all() or "No trackers found"
+
+
+@app.get("/trackers/{value}")
+async def get_tracker(value: str, db: db_dependency):
+    tracker = db.query(Trackers).filter(Trackers.value == value).first()
+    if tracker is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    return {"id": tracker.id, "value": tracker.value} or "No trackers found"
+
+
+@app.delete("/trackers/{tracker}")
+async def delete_tracker(tracker: str, db: db_dependency):
+    db.query(Trackers).filter(Trackers.value == tracker).delete()
+    db.commit()
+
+
+############
 # COURSES
 ############
 
 
 @app.post("/courses/")
-async def add_course(course: CourseBase, db: db_dependency):
+async def add_course(tracker: str, course: CourseBase, db: db_dependency):
     db_course = Courses(name=course.name, credits=course.credits)
     db.add(db_course)
     db.commit()

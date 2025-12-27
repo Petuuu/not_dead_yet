@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import CourseCard from "./CourseCard";
 import CourseForm from "./forms/CourseForm";
@@ -7,11 +8,14 @@ import EditCard from "./EditCard"
 import TaskForm from "./forms/TaskForm";
 
 export default function Courses() {
+    const navigate = useNavigate();
+    const { id } = useParams();
     const [courses, setCourses] = useState([]);
     const [deadlines, setDeadlines] = useState([]);
     const [tasks, setTasks] = useState([]);
     const [slide, setSlide] = useState({});
     const [edit, setEdit] = useState({});
+    const [valid, setValid] = useState(true);
 
     async function fetchAll() {
         try {
@@ -174,13 +178,81 @@ export default function Courses() {
         }
     }
 
+    async function createTracker() {
+        try {
+            const res = await api.post("/trackers/");
+            const trackerId = res?.data?.value;
+
+            if (trackerId) {
+                setValid(true);
+                navigate(`/${trackerId}`);
+            }
+        }
+        catch (e) {
+            if (e.response?.status === 429) {
+                alert("Please wait 10 seconds before creating another tracker.");
+            }
+            else {
+                console.error("Error creating tracker:", e);
+            }
+        }
+    }
+
+    async function getTrackers() {
+        if (!id) return;
+
+        try {
+            await api.get(`/trackers/${id}`);
+            setValid(true);
+            await fetchAll();
+            await load();
+        }
+        catch (e) {
+            console.error(`Error validating tracker ${id}:`, e);
+            setValid(false);
+        }
+    }
+
+    async function deleteTracker() {
+        try {
+            await api.delete(`/trackers/${id}`);
+            setValid(false);
+            navigate("/");
+        }
+        catch (e) {
+            console.error(`Error deleting tracker ${id}:`, e);
+        }
+    }
+
     useEffect(() => {
         fetchAll();
         load();
+        getTrackers();
     }, []);
 
-    return (
+    if (id && valid) return (
         <>
+            <button
+                onClick={() => navigate("/")}
+                className="absolute top-[2vw] left-[2vw] bg-blue-500 hover:bg-blue-700 flex items-center justify-center size-[5vw] rounded-full"
+            >
+                <img src="/back.png" alt="back" className="w-[2.3vw] h-[2.5vw]" />
+            </button>
+
+            <button
+                onClick={createTracker}
+                className="absolute top-[2vw] right-[2vw] flex items-center justify-center pb-[0.8vw] bg-teal-500 hover:bg-teal-700 size-[5vw] text-white text-[3.5vw] font-bold rounded-full"
+            >
+                +
+            </button>
+
+            <button
+                onClick={deleteTracker}
+                className="absolute top-[8vw] right-[2vw] flex items-center justify-center bg-red-500 hover:bg-red-700 size-[5vw] text-white text-[3.5vw] font-bold rounded-full"
+            >
+                <img src="/x.png" alt="x" className="size-[1.7vw]" />
+            </button>
+
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
                 {courses.map(c => {
                     if (edit[c.id]) {
@@ -228,4 +300,23 @@ export default function Courses() {
             </div>
         </>
     );
+
+    return (
+        <div className="flex flex-col items-center">
+            {
+                !valid ? (
+                    <h2 className="text-[2vw] font-semibold m-[3vw]"> Whoops! Wrong id </h2>
+                ) : (
+                    <h2 className="text-[2vw] font-semibold m-[3vw]"> Add tracker to use </h2>
+                )
+            }
+
+            <button
+                onClick={() => createTracker()}
+                className="flex items-center justify-center pb-[0.7vw] bg-teal-500 hover:bg-teal-700 size-[7vw] text-white text-[4vw] font-bold rounded-full"
+            >
+                +
+            </button>
+        </div>
+    )
 }
