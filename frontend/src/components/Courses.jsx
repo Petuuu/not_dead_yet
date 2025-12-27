@@ -16,12 +16,13 @@ export default function Courses() {
     async function fetchAll() {
         try {
             const res = await api.get("/courses/");
-            setCourses(res.data);
+            const coursesData = Array.isArray(res.data) ? res.data : [];
+            setCourses(coursesData);
 
-            for (const c of res.data) {
+            for (const c of coursesData) {
                 try {
                     const dlsRes = await api.get(`/deadlines/${c.id}`);
-                    setDeadlines(prev => ({ ...prev, [c.id]: dlsRes.data }));
+                    setDeadlines(prev => ({ ...prev, [c.id]: Array.isArray(dlsRes.data) ? dlsRes.data : [] }));
                 }
                 catch (e) {
                     console.error(`Error fetching deadlines for course ${c.id}:`, e);
@@ -30,7 +31,7 @@ export default function Courses() {
 
                 try {
                     const tasksRes = await api.get(`/tasks/${c.id}`);
-                    setTasks(prev => ({ ...prev, [c.id]: tasksRes.data }));
+                    setTasks(prev => ({ ...prev, [c.id]: Array.isArray(tasksRes.data) ? tasksRes.data : [] }));
                 }
                 catch (e) {
                     console.error(`Error fetching tasks for course ${c.id}:`, e);
@@ -40,6 +41,7 @@ export default function Courses() {
         }
         catch (e) {
             console.error("Error fetching courses:", e);
+            setCourses([]);
         }
     };
 
