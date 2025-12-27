@@ -233,7 +233,7 @@ export default function Courses() {
         fetchAll();
         load();
         getTrackers();
-    }, []);
+    }, [value]);
 
     if (value && valid) return (
         <>
