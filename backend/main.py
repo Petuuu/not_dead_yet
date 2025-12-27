@@ -120,8 +120,7 @@ async def create_tracker(request: Request, db: db_dependency):
             headers={"Retry-After": str(retry_after)},
         )
 
-    value = token_urlsafe(32)
-    tracker = Trackers(value=value)
+    tracker = Trackers(value=token_urlsafe(16))
     db.add(tracker)
     db.commit()
     db.refresh(tracker)
