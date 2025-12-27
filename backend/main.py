@@ -10,7 +10,7 @@ from models import Base, Courses, Deadlines, Tasks
 app = FastAPI()
 Base.metadata.create_all(bind=engine)
 
-origins = ["http://localhost:3000"]
+origins = ["not-dead-yet.vercel.app"]
 
 app.add_middleware(
     CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
