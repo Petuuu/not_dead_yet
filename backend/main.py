@@ -12,7 +12,7 @@ Base.metadata.create_all(bind=engine)
 
 origins = [
     "http://localhost:3000",
-    "https://not-dead-yet.fly.dev",
+    "https://not-dead-yet.vercel.app",
 ]
 
 app.add_middleware(
