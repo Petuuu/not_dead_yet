@@ -42,16 +42,30 @@ export default function EditCard({
     let hasCurr = false;
 
     async function handleSave() {
-        for (const [taskId, todo] of Object.entries(localTasks)) {
-            await updateTodo(+taskId, todo);
-        }
-        for (const [deadlineId, name] of Object.entries(localDlName)) {
-            await updateDlName(+deadlineId, name);
-        }
-        for (const [deadlineId, due] of Object.entries(localDlDue)) {
-            await updateDlDue(+deadlineId, due);
-        }
-        await updateCourse(course.id, localCourse.name, localCourse.credits);
+        const taskLookup = new Map(tasks.map(t => [t.id, t.todo]));
+        const deadlineLookup = new Map(deadlines.map(d => [d.id, d]));
+
+        const taskUpdates = Object.entries(localTasks)
+            .filter(([taskId, todo]) => taskLookup.get(+taskId) !== todo)
+            .map(([taskId, todo]) => updateTodo(+taskId, todo));
+
+        const dlNameUpdates = Object.entries(localDlName)
+            .filter(([deadlineId, name]) => (deadlineLookup.get(+deadlineId)?.name ?? "") !== name)
+            .map(([deadlineId, name]) => updateDlName(+deadlineId, name));
+
+        const dlDueUpdates = Object.entries(localDlDue)
+            .filter(([deadlineId, due]) => Array.isArray(due) && due.join("/") !== (deadlineLookup.get(+deadlineId)?.due ?? ""))
+            .map(([deadlineId, due]) => updateDlDue(+deadlineId, due, { refresh: false }));
+
+        const courseChanged = localCourse.name !== course.name || +localCourse.credits !== course.credits;
+        const courseUpdate = courseChanged ? updateCourse(course.id, localCourse.name, +localCourse.credits) : null;
+
+        await Promise.all([
+            ...taskUpdates,
+            ...dlNameUpdates,
+            ...dlDueUpdates,
+            courseUpdate
+        ].filter(Boolean));
 
         await fetchAll();
         setEdit(prev => ({ ...prev, [course.id]: false }));

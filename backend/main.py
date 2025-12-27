@@ -1,20 +1,34 @@
-from fastapi import FastAPI, status, Response, Depends
+from fastapi import FastAPI, status, Response, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
 from pydantic import BaseModel
 from typing import Annotated
 from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
+from time import time
 from db import engine, SessionLocal
 from models import Base, Courses, Deadlines, Tasks
 
-app = FastAPI()
 Base.metadata.create_all(bind=engine)
+
+
+class TimingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start_time = time()
+        response = await call_next(request)
+        process_time = time() - start_time
+        response.headers["X-Process-Time"] = str(process_time)
+        print(f"{request.method} {request.url.path} completed in {process_time:.4f}s")
+        return response
+
 
 origins = [
     "http://localhost:3000",
     "https://not-dead-yet.vercel.app",
 ]
 
+app = FastAPI()
+app.add_middleware(TimingMiddleware)
 app.add_middleware(
     CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
 )
