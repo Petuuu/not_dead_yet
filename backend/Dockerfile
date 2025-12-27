@@ -1,15 +1,20 @@
-FROM python:3.12.3 AS builder
+# Use official Python runtime as a parent image
+FROM python:3.11-slim
 
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
+# Set working directory in container
 WORKDIR /app
 
+# Copy requirements first for better caching
+COPY requirements.txt .
 
-RUN python -m venv .venv
-COPY requirements.txt ./
-RUN .venv/bin/pip install -r requirements.txt
-FROM python:3.12.3-slim
-WORKDIR /app
-COPY --from=builder /app/.venv .venv/
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the rest of the application
 COPY . .
-CMD ["/app/.venv/bin/fastapi", "run"]
+
+# Expose port
+EXPOSE 8000
+
+# Run the application
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
