@@ -160,15 +160,15 @@ export default function Courses() {
     }
 
     async function load() {
-        await fetchAll();
-        courses.forEach(c => setEdit(prev => ({ ...prev, [c.id]: false })));
-        initSlides();
-    }
-
-    function initSlides() {
-        courses.forEach(c => {
-            setSlide(prev => ({ ...prev, [c.id]: 0 }))
-        })
+        try {
+            const res = await api.get("/courses/");
+            setCourses(res.data);
+            res.data.forEach(c => setEdit(prev => ({ ...prev, [c.id]: false })));
+            res.data.forEach(c => setSlide(prev => ({ ...prev, [c.id]: 0 })));
+        } catch (e) {
+            console.error("Error loading courses:", e);
+            setCourses([]);
+        }
     }
 
     useEffect(() => {
