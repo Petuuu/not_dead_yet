@@ -48,7 +48,9 @@ class UpdateDlName(BaseModel):
 
 
 class UpdateDlDue(BaseModel):
-    due: datetime
+    day: int
+    month: int
+    year: int
 
 
 class UpdateChecked(BaseModel):
@@ -214,7 +216,7 @@ async def update_dl_name(dl_id: int, update: UpdateDlName, db: db_dependency):
 @app.put("/deadlines/{dl_id}/due")
 async def update_dl_due(dl_id: int, update: UpdateDlDue, db: db_dependency):
     prev = db.query(Deadlines).filter(Deadlines.id == dl_id).first()
-    prev.due = update.due
+    prev.due = datetime(update.year, update.month, update.day)
     db.commit()
 
 

@@ -105,8 +105,7 @@ export default function Courses() {
 
     async function updateDlDue(deadlineId, due) {
         try {
-            const dateObj = new Date(due[2], due[1] - 1, due[0]);
-            await api.put(`/deadlines/${deadlineId}/due`, { due: dateObj.toISOString() });
+            await api.put(`/deadlines/${deadlineId}/due`, { day: +due[0], month: +due[1], year: +due[2] });
             await fetchAll();
         }
         catch (e) {
@@ -176,6 +175,7 @@ export default function Courses() {
     }
 
     useEffect(() => {
+        fetchAll();
         load();
     }, []);
 
