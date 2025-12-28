@@ -31,7 +31,7 @@ origins = [
     "https://not-dead-yet.vercel.app",
 ]
 
-app = FastAPI(docs_url=os.environ.get("URL_DOCS"))
+app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(TimingMiddleware)
 app.add_middleware(
     CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
