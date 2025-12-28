@@ -15,6 +15,8 @@ export default function TaskForm({ addTask, courses, deadlines }) {
             addTask(courseId, deadlineId, todo);
             setTodo("");
         }
+        else if (courseId === 0) alert("You must select course and deadline.");
+        else if (deadlineId === 0) alert("You must select deadline.");
     };
 
     return (
@@ -54,6 +56,7 @@ export default function TaskForm({ addTask, courses, deadlines }) {
                 placeholder="Enter task name..."
                 autoComplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
+                required
             />
 
             <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-[0.4vw] text-white py-[0.25vw] px-[0.4vw] rounded">

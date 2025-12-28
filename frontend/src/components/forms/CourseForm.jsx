@@ -11,6 +11,7 @@ export default function CourseForm({ addCourse }) {
             setCourseName("");
             setCredits(0);
         }
+        else if (credits === 0) alert("You must select course credits.");
     };
 
     return (
@@ -21,6 +22,7 @@ export default function CourseForm({ addCourse }) {
                 placeholder="Enter course name..."
                 autoComplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
+                required
             />
 
             <div className="relative inline-flex items-center">

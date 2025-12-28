@@ -12,6 +12,7 @@ export default function DeadlineForm({ addDeadline, courses }) {
             setDeadlineName("");
             setDueDate("");
         }
+        else if (courseId === 0) alert("You must select a course");
     };
 
     return (
@@ -36,13 +37,16 @@ export default function DeadlineForm({ addDeadline, courses }) {
                 placeholder="Enter deadline name..."
                 autoComplete="off"
                 className="bg-inherit w-[10vw] placeholder-stone-600 focus:outline-none"
+                required
             />
 
             <input
                 type="date"
                 value={dueDate}
                 onChange={e => setDueDate(e.target.value)}
-                className="bg-inherit w-[10vw] mx-[0.8vw] text-stone-900 focus:outline-none" />
+                className="bg-inherit w-[10vw] mx-[0.8vw] text-stone-900 focus:outline-none"
+                required
+            />
 
             <button className="flex-shrink-0 bg-teal-500 hover:bg-teal-700 border-teal-500 hover:border-teal-700 text-sm border-[0.4vw] text-white py-[0.25vw] px-[0.4vw] rounded">
                 Add deadline
