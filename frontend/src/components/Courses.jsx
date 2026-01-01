@@ -260,43 +260,47 @@ export default function Courses() {
             </button>
 
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
-                {courses.map(c => {
-                    if (edit[c.id]) {
+                {courses.length > 0 ? (
+                    courses.map(c => {
+                        if (edit[c.id]) {
+                            return (
+                                <EditCard
+                                    key={c.id}
+                                    course={c}
+                                    deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                                    tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
+                                    slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
+                                    setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                                    setEdit={setEdit}
+                                    duplicateDl={duplicateDl}
+                                    updateCourse={updateCourse}
+                                    updateDlName={updateDlName}
+                                    updateDlDue={updateDlDue}
+                                    updateTodo={updateTodo}
+                                    deleteCourse={deleteCourse}
+                                    deleteDeadline={deleteDeadline}
+                                    deleteTask={deleteTask}
+                                    fetchAll={fetchAll}
+                                />
+                            );
+                        }
+
                         return (
-                            <EditCard
+                            <CourseCard
                                 key={c.id}
                                 course={c}
                                 deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
                                 tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
                                 slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
                                 setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                                updateChecked={updateChecked}
                                 setEdit={setEdit}
-                                duplicateDl={duplicateDl}
-                                updateCourse={updateCourse}
-                                updateDlName={updateDlName}
-                                updateDlDue={updateDlDue}
-                                updateTodo={updateTodo}
-                                deleteCourse={deleteCourse}
-                                deleteDeadline={deleteDeadline}
-                                deleteTask={deleteTask}
-                                fetchAll={fetchAll}
                             />
                         );
-                    }
-
-                    return (
-                        <CourseCard
-                            key={c.id}
-                            course={c}
-                            deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
-                            tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
-                            slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
-                            setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
-                            updateChecked={updateChecked}
-                            setEdit={setEdit}
-                        />
-                    );
-                })}
+                    })) : (
+                        <h2 className="col-span-4 text-center text-[2vw] font-semibold"> Add a course to start! </h2>
+                    )
+                }
             </div>
 
             <div className="bg-slate-300 bg-opacity-70 flex flex-wrap mx-[5vw] mb-[3vw] rounded-xl">
