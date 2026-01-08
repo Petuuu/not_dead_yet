@@ -121,6 +121,15 @@ export default function Courses() {
     async function updateChecked(taskId, checked) {
         try {
             await api.put(`/tasks/${taskId}/checked`, { checked: checked });
+            const res = await api.put(`/tasks/${taskId}/checked`, { checked: checked });
+            setTasks(prev => ({
+                ...prev,
+                [res.data.course]: prev[res.data.course].map(task =>
+                    task.id === taskId
+                        ? { ...task, checked }
+                        : task
+                )
+            }))
             await fetchAll();
         }
         catch (e) {
