@@ -12,8 +12,8 @@ export default function Courses() {
     const navigate = useNavigate();
     const { id: value } = useParams();
     const [courses, setCourses] = useState([]);
-    const [deadlines, setDeadlines] = useState([]);
-    const [tasks, setTasks] = useState([]);
+    const [deadlines, setDeadlines] = useState({});
+    const [tasks, setTasks] = useState({});
     const [slide, setSlide] = useState({});
     const [edit, setEdit] = useState({});
     const [valid, setValid] = useState(true);
@@ -120,8 +120,15 @@ export default function Courses() {
 
     async function updateChecked(taskId, checked) {
         try {
-            await api.put(`/tasks/${taskId}/checked`, { checked: checked });
-            await fetchAll();
+            const res = await api.put(`/tasks/${taskId}/checked`, { checked: checked });
+            setTasks(prev => ({
+                ...prev,
+                [res.data.course]: prev[res.data.course].map(task =>
+                    task.id === taskId
+                        ? { ...task, checked }
+                        : task
+                )
+            }))
         }
         catch (e) {
             console.error(`Error updating task ${taskId}:`, e);
@@ -131,6 +138,7 @@ export default function Courses() {
     async function updateTodo(taskId, todo) {
         try {
             await api.put(`/tasks/${taskId}/todo`, { todo: todo });
+            await fetchAll();
         }
         catch (e) {
             console.error(`Error updating task ${taskId}:`, e);
@@ -231,10 +239,10 @@ export default function Courses() {
     }
 
     useEffect(() => {
-        fetchAll();
-        load();
         getTrackers();
     }, [value]);
+
+    console.log(tasks)
 
     if (value && valid) return (
         <>

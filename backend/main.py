@@ -8,7 +8,6 @@ from sqlalchemy.orm import Session
 from datetime import datetime, timedelta
 from time import time
 from dotenv import load_dotenv
-import os
 from db import engine, SessionLocal
 from models import Base, Courses, Deadlines, Tasks, Trackers
 
@@ -34,7 +33,11 @@ origins = [
 app = FastAPI(docs_url=None, redoc_url=None)
 app.add_middleware(TimingMiddleware)
 app.add_middleware(
-    CORSMiddleware, allow_origins=origins, allow_methods=["*"], allow_headers=["*"]
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -215,8 +218,8 @@ async def delete_course(course_id: int, db: db_dependency):
 
 @app.post("/deadlines/")
 async def add_deadline(tracker: str, dl: DeadlineBase, db: db_dependency):
-    deadline = Deadlines(tracker=tracker, course=dl.course, name=dl.name, due=dl.due)
-    db.add(deadline)
+    dl = Deadlines(tracker=tracker, course=dl.course, name=dl.name, due=dl.due)
+    db.add(dl)
     db.commit()
 
 
@@ -490,6 +493,12 @@ async def update_checked(task_id: int, update: UpdateChecked, db: db_dependency)
     prev = db.query(Tasks).filter(Tasks.id == task_id).first()
     prev.checked = update.checked
     db.commit()
+
+    return {
+        "id": task_id,
+        "course": prev.course,
+        "checked": update.checked,
+    }
 
 
 @app.put("/tasks/{task_id}/todo")
