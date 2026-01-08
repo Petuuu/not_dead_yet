@@ -130,7 +130,6 @@ export default function Courses() {
                         : task
                 )
             }))
-            await fetchAll();
         }
         catch (e) {
             console.error(`Error updating task ${taskId}:`, e);
