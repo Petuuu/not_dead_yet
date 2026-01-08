@@ -82,8 +82,11 @@ export default function Courses() {
 
     async function addTask(courseId, deadlineId, todo) {
         try {
-            await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo }, { params: { tracker: value } });
-            await fetchAll();
+            const res = await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo }, { params: { tracker: value } });
+            setTasks(prev => ({
+                ...prev,
+                [courseId]: [...(prev[courseId] || []), res.data]
+            }))
         }
         catch (e) {
             console.error("Error adding task:", e)

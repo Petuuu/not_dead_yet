@@ -135,11 +135,8 @@ async def get_trackers(db: db_dependency):
 
 @app.get("/trackers/{tracker}")
 async def get_tracker(tracker: str, db: db_dependency):
-    tracker = db.query(Trackers).filter(Trackers.value == tracker).first()
-    if tracker is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
-
-    return tracker.id or "No tracker found"
+    tracker_obj = db.query(Trackers).filter(Trackers.value == tracker).first()
+    return tracker_obj.id or "No tracker found"
 
 
 @app.delete("/trackers/{tracker}")
@@ -154,8 +151,8 @@ async def delete_tracker(tracker: str, db: db_dependency):
 
 
 @app.post("/courses/")
-async def add_course(tracker: str, course: CourseBase, db: db_dependency):
-    db_course = Courses(tracker=tracker, name=course.name, credits=course.credits)
+async def add_course(tracker: str, c: CourseBase, db: db_dependency):
+    db_course = Courses(tracker=tracker, name=c.name, credits=c.credits)
     db.add(db_course)
     db.commit()
 
@@ -212,8 +209,8 @@ async def delete_course(course_id: int, db: db_dependency):
 
 
 @app.post("/deadlines/")
-async def add_deadline(tracker: str, dl: DeadlineBase, db: db_dependency):
-    dl = Deadlines(tracker=tracker, course=dl.course, name=dl.name, due=dl.due)
+async def add_deadline(tracker: str, d: DeadlineBase, db: db_dependency):
+    dl = Deadlines(tracker=tracker, course=d.course, name=d.name, due=d.due)
     db.add(dl)
     db.commit()
 
@@ -359,16 +356,39 @@ async def delete_deadlines(dl_id: int, db: db_dependency):
 
 
 @app.post("/tasks/")
-async def add_task(tracker: str, task: TaskBase, db: db_dependency):
-    db_task = Tasks(
+async def add_task(tracker: str, t: TaskBase, db: db_dependency):
+    task = Tasks(
         tracker=tracker,
-        course=task.course,
-        deadline=task.deadline,
-        todo=task.todo,
-        checked=task.checked,
+        course=t.course,
+        deadline=t.deadline,
+        todo=t.todo,
+        checked=t.checked,
     )
-    db.add(db_task)
+    db.add(task)
     db.commit()
+    db.refresh(task)
+
+    info = (
+        db.query(
+            Tasks.id,
+            Courses.name.label("course"),
+            Deadlines.name.label("deadline"),
+            Deadlines.due.label("dlDue"),
+        )
+        .join(Courses, Tasks.course == Courses.id)
+        .join(Deadlines, Tasks.deadline == Deadlines.id)
+        .filter(Tasks.id == task.id)
+        .first()
+    )
+
+    return {
+        "id": task.id,
+        "course": info.course,
+        "deadline": info.deadline,
+        "dlDue": [info.dlDue.day, info.dlDue.month, info.dlDue.year],
+        "todo": task.todo,
+        "checked": task.checked,
+    }
 
 
 @app.get("/tasks/")
