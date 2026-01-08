@@ -116,12 +116,7 @@ async def create_tracker(request: Request, db: db_dependency):
     elapsed = now - last_created
 
     if elapsed < TRACKER_COOLDOWN_SECONDS:
-        retry_after = int(TRACKER_COOLDOWN_SECONDS - elapsed + 0.999)
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Tracker creation is limited to one every 10 seconds.",
-            headers={"Retry-After": str(retry_after)},
-        )
+        return int(TRACKER_COOLDOWN_SECONDS - elapsed + 0.999)
 
     tracker = Trackers(value=token_urlsafe(16))
     db.add(tracker)

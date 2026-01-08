@@ -120,7 +120,6 @@ export default function Courses() {
 
     async function updateChecked(taskId, checked) {
         try {
-            await api.put(`/tasks/${taskId}/checked`, { checked: checked });
             const res = await api.put(`/tasks/${taskId}/checked`, { checked: checked });
             setTasks(prev => ({
                 ...prev,
@@ -192,20 +191,18 @@ export default function Courses() {
     async function createTracker() {
         try {
             const res = await api.post("/trackers/");
-            const trackerValue = res?.data?.value;
 
-            if (trackerValue) {
+            if (!isNaN(res.data)) {
+                alert(`Please wait ${res.data} seconds before creating another tracker.`);
+            }
+
+            else if (res.data.value) {
                 setValid(true);
-                navigate(`/${trackerValue}`);
+                navigate(`/${res.data.value}`);
             }
         }
         catch (e) {
-            if (e.response?.status === 429) {
-                alert("Please wait 10 seconds before creating another tracker.");
-            }
-            else {
-                console.error("Error creating tracker:", e);
-            }
+            console.error("Error creating tracker:", e);
         }
     }
 
@@ -242,8 +239,6 @@ export default function Courses() {
     useEffect(() => {
         getTrackers();
     }, [value]);
-
-    console.log(tasks)
 
     if (value && valid) return (
         <>
