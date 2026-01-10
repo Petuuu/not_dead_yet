@@ -52,7 +52,7 @@ export default function Courses() {
 
     async function addCourse(courseName, credits) {
         try {
-            await api.post("/courses/", { name: courseName, credits: credits }, { params: { tracker: value } });
+            await api.post("/courses", { name: courseName, credits: credits }, { params: { tracker: value } });
             await fetchAll();
         }
         catch (e) {
@@ -62,7 +62,7 @@ export default function Courses() {
 
     async function addDeadline(courseId, name, due_date) {
         try {
-            await api.post("/deadlines/", { course: courseId, name: name, due: due_date }, { params: { tracker: value } });
+            await api.post("/deadlines", { course: courseId, name: name, due: due_date }, { params: { tracker: value } });
             await fetchAll();
         }
         catch (e) {
@@ -82,7 +82,7 @@ export default function Courses() {
 
     async function addTask(courseId, deadlineId, todo) {
         try {
-            const res = await api.post("/tasks/", { course: courseId, deadline: deadlineId, todo: todo }, { params: { tracker: value } });
+            const res = await api.post("/tasks", { course: courseId, deadline: deadlineId, todo: todo }, { params: { tracker: value } });
             setTasks(prev => ({
                 ...prev,
                 [courseId]: [...(prev[courseId] || []), res.data]
@@ -193,7 +193,7 @@ export default function Courses() {
 
     async function createTracker() {
         try {
-            const res = await api.post("/trackers/");
+            const res = await api.post("/trackers");
 
             if (!isNaN(res.data)) {
                 alert(`Please wait ${res.data} seconds before creating another tracker.`);

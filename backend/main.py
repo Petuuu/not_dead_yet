@@ -107,7 +107,7 @@ def _client_key(request: Request) -> str:
     return "unknown"
 
 
-@app.post("/trackers/")
+@app.post("/trackers")
 async def create_tracker(request: Request, db: db_dependency):
     client_key = _client_key(request)
     print(client_key)
@@ -128,7 +128,7 @@ async def create_tracker(request: Request, db: db_dependency):
     return {"id": tracker.id, "value": tracker.value}
 
 
-@app.get("/trackers/")
+@app.get("/trackers")
 async def get_trackers(db: db_dependency):
     return db.query(Trackers).order_by(Trackers.id).all() or "No trackers found"
 
@@ -150,14 +150,14 @@ async def delete_tracker(tracker: str, db: db_dependency):
 ############
 
 
-@app.post("/courses/")
+@app.post("/courses")
 async def add_course(tracker: str, c: CourseBase, db: db_dependency):
     db_course = Courses(tracker=tracker, name=c.name, credits=c.credits)
     db.add(db_course)
     db.commit()
 
 
-@app.get("/courses/")
+@app.get("/courses")
 async def get_courses(db: db_dependency):
     courses = db.query(Courses).order_by(Courses.tracker, Courses.id).all()
 
@@ -208,7 +208,7 @@ async def delete_course(course_id: int, db: db_dependency):
 ############
 
 
-@app.post("/deadlines/")
+@app.post("/deadlines")
 async def add_deadline(tracker: str, d: DeadlineBase, db: db_dependency):
     dl = Deadlines(tracker=tracker, course=d.course, name=d.name, due=d.due)
     db.add(dl)
@@ -256,7 +256,7 @@ async def duplicate_deadline(dl_id: int, db: db_dependency):
         )
 
 
-@app.get("/deadlines/")
+@app.get("/deadlines")
 async def get_all_deadlines(db: db_dependency):
     dls = (
         db.query(
@@ -355,7 +355,7 @@ async def delete_deadlines(dl_id: int, db: db_dependency):
 ############
 
 
-@app.post("/tasks/")
+@app.post("/tasks")
 async def add_task(tracker: str, t: TaskBase, db: db_dependency):
     task = Tasks(
         tracker=tracker,
@@ -391,7 +391,7 @@ async def add_task(tracker: str, t: TaskBase, db: db_dependency):
     }
 
 
-@app.get("/tasks/")
+@app.get("/tasks")
 async def get_all_tasks(db: db_dependency):
     tasks = (
         db.query(
