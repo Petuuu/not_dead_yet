@@ -25,6 +25,17 @@ export default function Instructions() {
                     Start by entering the course name and number of credits. Next, add your deadlines, and finally create your tasks.
                 </p>
             </div>
+
+            <div className="mx-[2vw]">
+                <h3 className="text-[1.4vw] mt-[1vw] font-semibold text-neutral-600"> Deadline duplication </h3>
+
+                <p className="text-[1.2vw] mx-[2vw] my-[1vw]">
+                    If you have recurring weekly deadlines like “Something 1”, “Something 2”, and so on with the same tasks each time,
+                    you can save time by using the Duplicate button. While in edit mode, click the Duplicate button next to the Delete
+                    option. This will create a new deadline one week after the original, automatically increase the number by one, and
+                    copy over all the same tasks.
+                </p>
+            </div>
         </div>
     );
 }
