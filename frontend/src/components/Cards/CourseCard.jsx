@@ -16,6 +16,17 @@ export default function CourseCard({
 
     const currDl = deadlines[slide];
     const currDue = toDate(currDl?.dlDue);
+    let dueText;
+    const tdy = new Date();
+    const diff = Math.ceil((currDue - tdy) / (1000 * 60 * 60 * 24));
+    const color = diff < 0
+        ? "text-black"
+        : diff <= 1
+            ? "text-red-600"
+            : diff <= 3
+                ? "text-amber-600"
+                : "text-green-600"
+
     const hasOldTasks = currDue
         ? tasks.some(t => {
             const taskDate = toDate(t.dlDue);
@@ -26,6 +37,23 @@ export default function CourseCard({
     let isInserted = false;
     let tasksOutput = true;
     let hasCurr = false;
+
+    if (diff < -1) { dueText = `${diff} days since due`; }
+    else {
+        switch (diff) {
+            case -1:
+            dueText = "due yesterday";
+            break;
+            case 0:
+            dueText = "due today";
+            break;
+            case 1:
+            dueText = "due tomorrow";
+            break;
+            default:
+            dueText = `${diff} days until due`;
+        }
+    }
 
     async function handleChange(e) {
         const id = +e.target.id;
@@ -50,7 +78,7 @@ export default function CourseCard({
                 ) : deadlines.length === 1 ? (
                     <div className="flex items-center gap-[0.3vw] mx-[1vw]">
                         <img src="/calendar.png" alt="calendar icon" className="size-[1vw]" />
-                        <p> {deadlines[0].name}: {deadlines[0].due} </p>
+                        <p> {deadlines[0].name}: {deadlines[0].due} <span className={`font-bold pl-[0.3vw] ${color}`}> {dueText} </span> </p>
                     </div>
 
                 ) : (
@@ -58,7 +86,7 @@ export default function CourseCard({
                         <div className="flex items-center gap-[0.3vw] mx-[1vw]">
                             <img src="/calendar.png" alt="calendar icon" className="size-[1vw]"
                             />
-                            <p> {deadlines[slide].due} </p>
+                            <p> {deadlines[slide].due} <span className={`font-bold pl-[0.3vw] ${color}`}> {dueText} </span> </p>
                         </div>
 
                         <Slides
