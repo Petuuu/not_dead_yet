@@ -38,7 +38,7 @@ export default function CourseCard({
     let tasksOutput = true;
     let hasCurr = false;
 
-    if (diff < -1) { dueText = `${diff} days since due`; }
+    if (diff < -1) { dueText = `${Math.abs(diff)} days since due`; }
     else {
         switch (diff) {
             case -1:
