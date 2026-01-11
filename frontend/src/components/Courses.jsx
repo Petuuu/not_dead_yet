@@ -75,8 +75,9 @@ export default function Courses() {
 
     async function duplicateDl(deadlineId) {
         try {
-            await api.post(`/deadlines/${deadlineId}`);
-            await fetchAll();
+            const res = await api.post(`/deadlines/${deadlineId}`);
+            if (typeof (res.data) === "string") { alert(res.data); }
+            else {await fetchAll();}
         }
         catch (e) {
             console.error(`Error duplicating deadline ${deadlineId}`);

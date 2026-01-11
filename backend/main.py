@@ -248,7 +248,7 @@ async def duplicate_deadline(dl_id: int, db: db_dependency):
             new_name += c
 
     if as_int == 0:
-        return Response(status_code=status.HTTP_204_NO_CONTENT)
+        return "Invalid deadline name for duplication."
 
     new_name += str(as_int + 1)
     new_due = dl.due + timedelta(days=7)
