@@ -103,7 +103,7 @@ export default function CourseCard({
                                                     id={t.id}
                                                     checked={t.checked}
                                                     onChange={handleChange}
-                                                    className="peer size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
+                                                    className="peer shrink-0 size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
                                                 />
 
                                                 <label className={`mx-[1vw] peer-checked:line-through peer-checked:text-neutral-400 ${isOld ? "text-neutral-500" : "text-black"}`}>
