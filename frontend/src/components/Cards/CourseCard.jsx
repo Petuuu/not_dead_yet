@@ -89,7 +89,7 @@ export default function CourseCard({
                                 if (!isOld && !isCurr && !hasOldTasks && !hasCurr) {
                                     return tasksOutput ? (
                                         tasksOutput = false,
-                                        <p className="mx-[1vw]"> No tasks!! </p>
+                                        <p key={`no-tasks-${course.id}`} className="mx-[1vw]"> No tasks!! </p>
                                     ) : null
                                 };
 

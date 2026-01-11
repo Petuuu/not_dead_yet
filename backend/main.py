@@ -213,6 +213,14 @@ async def add_deadline(tracker: str, d: DeadlineBase, db: db_dependency):
     dl = Deadlines(tracker=tracker, course=d.course, name=d.name, due=d.due)
     db.add(dl)
     db.commit()
+    db.refresh(dl)
+
+    return {
+        "id": dl.id,
+        "name": dl.name,
+        "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
+        "dlDue": [dl.due.day, dl.due.month, dl.due.year],
+    }
 
 
 @app.post("/deadlines/{dl_id}")
@@ -371,11 +379,9 @@ async def add_task(tracker: str, t: TaskBase, db: db_dependency):
     info = (
         db.query(
             Tasks.id,
-            Courses.name.label("course"),
             Deadlines.name.label("deadline"),
             Deadlines.due.label("dlDue"),
         )
-        .join(Courses, Tasks.course == Courses.id)
         .join(Deadlines, Tasks.deadline == Deadlines.id)
         .filter(Tasks.id == task.id)
         .first()
@@ -383,7 +389,6 @@ async def add_task(tracker: str, t: TaskBase, db: db_dependency):
 
     return {
         "id": task.id,
-        "course": info.course,
         "deadline": info.deadline,
         "dlDue": [info.dlDue.day, info.dlDue.month, info.dlDue.year],
         "todo": task.todo,

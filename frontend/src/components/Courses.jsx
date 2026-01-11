@@ -62,8 +62,11 @@ export default function Courses() {
 
     async function addDeadline(courseId, name, due_date) {
         try {
-            await api.post("/deadlines", { course: courseId, name: name, due: due_date }, { params: { tracker: value } });
-            await fetchAll();
+            const res = await api.post("/deadlines", { course: courseId, name: name, due: due_date }, { params: { tracker: value } });
+            setDeadlines(prev => ({
+                ...prev,
+                [courseId]: [...(prev[courseId] || []), res.data]
+            }))
         }
         catch (e) {
             console.error("Error adding deadline:", e);
