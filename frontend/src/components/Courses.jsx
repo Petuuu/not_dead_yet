@@ -246,6 +246,23 @@ export default function Courses() {
         getTrackers();
     }, [value]);
 
+    useEffect(() => {
+        setSlide(prev => {
+            const next = { ...prev };
+            let changed = false;
+            for (const c of courses) {
+                const dls = Array.isArray(deadlines[c.id]) ? deadlines[c.id] : [];
+                const current = typeof prev[c.id] === "number" ? prev[c.id] : 0;
+                const clamped = dls.length > 0 ? Math.max(0, Math.min(current, dls.length - 1)) : 0;
+                if (current !== clamped) {
+                    next[c.id] = clamped;
+                    changed = true;
+                }
+            }
+            return changed ? next : prev;
+        });
+    }, [deadlines, courses]);
+
     if (value && valid) return (
         <>
             <button
@@ -272,15 +289,21 @@ export default function Courses() {
             <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
                 {courses.length > 0 ? (
                     courses.map(c => {
+                        const dls = Array.isArray(deadlines[c.id]) ? deadlines[c.id] : [];
+                        const rawSlide = typeof slide[c.id] === "number" ? slide[c.id] : 0;
+                        const safeSlide = dls.length > 0 ? Math.max(0, Math.min(rawSlide, dls.length - 1)) : 0;
                         if (edit[c.id]) {
                             return (
                                 <EditCard
                                     key={c.id}
                                     course={c}
-                                    deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                                    deadlines={dls}
                                     tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
-                                    slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
-                                    setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                                    slide={safeSlide}
+                                    setSlide={(newSlide) => setSlide(prev => ({
+                                        ...prev,
+                                        [c.id]: dls.length > 0 ? Math.max(0, Math.min(newSlide, dls.length - 1)) : 0
+                                    }))}
                                     setEdit={setEdit}
                                     duplicateDl={duplicateDl}
                                     updateCourse={updateCourse}
@@ -299,10 +322,13 @@ export default function Courses() {
                             <CourseCard
                                 key={c.id}
                                 course={c}
-                                deadlines={Array.isArray(deadlines[c.id]) ? deadlines[c.id] : []}
+                                deadlines={dls}
                                 tasks={Array.isArray(tasks[c.id]) ? tasks[c.id] : []}
-                                slide={typeof slide[c.id] === "number" ? slide[c.id] : 0}
-                                setSlide={(newSlide) => setSlide(prev => ({ ...prev, [c.id]: newSlide }))}
+                                slide={safeSlide}
+                                setSlide={(newSlide) => setSlide(prev => ({
+                                    ...prev,
+                                    [c.id]: dls.length > 0 ? Math.max(0, Math.min(newSlide, dls.length - 1)) : 0
+                                }))}
                                 updateChecked={updateChecked}
                                 setEdit={setEdit}
                             />

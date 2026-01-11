@@ -218,7 +218,7 @@ async def add_deadline(tracker: str, d: DeadlineBase, db: db_dependency):
     return {
         "id": dl.id,
         "name": dl.name,
-        "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
+        "due": f"{dl.due.day}/{dl.due.month}/{dl.due.year}",
         "dlDue": [dl.due.day, dl.due.month, dl.due.year],
     }
 
