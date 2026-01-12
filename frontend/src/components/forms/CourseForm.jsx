@@ -6,7 +6,7 @@ export default function CourseForm({ addCourse }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        if (courseName && credits > 0) {
+        if (courseName && credits >= 0) {
             addCourse(courseName, credits);
             setCourseName("");
             setCredits(0);

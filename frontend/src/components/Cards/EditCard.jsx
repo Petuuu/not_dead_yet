@@ -41,6 +41,14 @@ export default function EditCard({
     let tasksOutput = true;
     let hasCurr = false;
 
+    let courseChanged;
+    let courseUpdate;
+
+    function checkCredits() {
+        if (localCourse.credits > 0) return true;
+        alert("Credits must be non-negative")
+    }
+
     async function handleSave() {
         const taskLookup = new Map(tasks.map(t => [t.id, t.todo]));
         const deadlineLookup = new Map(deadlines.map(d => [d.id, d]));
@@ -57,8 +65,14 @@ export default function EditCard({
             .filter(([deadlineId, due]) => Array.isArray(due) && due.join("/") !== (deadlineLookup.get(+deadlineId)?.due ?? ""))
             .map(([deadlineId, due]) => updateDlDue(+deadlineId, due, { refresh: false }));
 
-        const courseChanged = localCourse.name !== course.name || +localCourse.credits !== course.credits;
-        const courseUpdate = courseChanged ? updateCourse(course.id, localCourse.name, +localCourse.credits) : null;
+        if (checkCredits()) {
+            courseChanged = localCourse.name !== course.name || +localCourse.credits !== course.credits;
+            courseUpdate = courseChanged ? updateCourse(course.id, localCourse.name, +localCourse.credits) : null;
+        }
+        else {
+            courseChanged = localCourse.name !== course.name;
+            courseUpdate = courseChanged ? updateCourse(course.id, localCourse.name, course.credits) : null;
+        }
 
         await Promise.all([
             ...taskUpdates,
