@@ -155,6 +155,53 @@ async def add_course(tracker: str, c: CourseBase, db: db_dependency):
     db_course = Courses(tracker=tracker, name=c.name, credits=c.credits)
     db.add(db_course)
     db.commit()
+    db.refresh(db_course)
+    return db_course.id
+
+
+@app.post("/courses/{tracker}")
+async def duplicate_table(request: Request, tracker: str, db: db_dependency):
+    new = await create_tracker(request, db)
+
+    if type(new) == int:
+        return new
+
+    courses = (
+        db.query(Courses.id, Courses.name, Courses.credits)
+        .filter(Courses.tracker == tracker)
+        .all()
+    )
+
+    deadlines = {}
+    tasks = {}
+    for c in courses:
+        print("COURSE:\n", c)
+        db_course = Courses(name=c.name, credits=c.credits)
+        db_course = await add_course(new["value"], db_course, db)
+
+        deadlines[db_course] = (
+            db.query(Deadlines.id, Deadlines.name, Deadlines.due)
+            .filter(Deadlines.course == c.id)
+            .all()
+        )
+
+        for d in deadlines[db_course]:
+            print("\n\nDEADLINE:\n", d)
+            db_dl = Deadlines(course=db_course, name=d.name, due=d.due)
+            db_dl = await add_deadline(new["value"], db_dl, db)
+
+            tasks[db_dl["id"]] = (
+                db.query(Tasks.id, Tasks.todo, False)
+                .filter(Tasks.deadline == d.id)
+                .all()
+            )
+
+            for t in tasks[db_dl["id"]]:
+                print("\n\nTASK:\n", t)
+                db_task = Tasks(course=db_course, deadline=db_dl["id"], todo=t.todo)
+                await add_task(new["value"], db_task, db)
+
+    return new["value"]
 
 
 @app.get("/courses")
@@ -309,7 +356,6 @@ async def get_all_deadlines(tracker: str, db: db_dependency):
     return [
         {
             "id": d.id,
-            "tracker": d.tracker,
             "course": d.course,
             "name": d.name,
             "due": f"{d.due.day}/{d.due.month}/{d.due.year}",
