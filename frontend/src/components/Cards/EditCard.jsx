@@ -45,7 +45,7 @@ export default function EditCard({
     let courseUpdate;
 
     function checkCredits() {
-        if (localCourse.credits > 0) return true;
+        if (localCourse.credits >= 0) return true;
         alert("Credits must be non-negative")
     }
 
