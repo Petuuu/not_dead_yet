@@ -9,23 +9,22 @@ export default function CourseCard({
     setEdit,
     updateChecked
 }) {
-    const toDate = (dlArr) => {
+    function toDate (dlArr) {
         if (!Array.isArray(dlArr) || dlArr.length < 3) return null;
         return new Date(dlArr[2], dlArr[1] - 1, dlArr[0]);
     };
 
-    const currDl = deadlines[slide];
-    const currDue = toDate(currDl?.dlDue);
-    let dueText;
+    let isInserted = false;
+    let tasksOutput = true;
+    let hasCurr = false;
+
+    const currDue = toDate(deadlines[slide]?.dlDue);
     const tdy = new Date();
     const diff = Math.ceil((currDue - tdy) / (1000 * 60 * 60 * 24));
-    const color = diff < 0
-        ? "text-black"
-        : diff <= 1
-            ? "text-red-600"
-            : diff <= 3
-                ? "text-amber-600"
-                : "text-green-600"
+
+    const isDone = !tasks.some(t =>
+        t.deadline === deadlines[slide].name && !t.checked
+    );
 
     const hasOldTasks = currDue
         ? tasks.some(t => {
@@ -34,10 +33,22 @@ export default function CourseCard({
         })
         : false;
 
-    let isInserted = false;
-    let tasksOutput = true;
-    let hasCurr = false;
+    let color;
+    if (isDone) {
+        color = "text-neutral-400";
+        console.log("DONE")
+    }
+    else {
+        color = diff < 0
+            ? "text-black"
+            : diff <= 1
+                ? "text-red-600"
+                : diff <= 3
+                    ? "text-amber-600"
+                    : "text-green-600";
+    }
 
+    let dueText;
     if (diff < -1) { dueText = `${Math.abs(diff)} days since due`; }
     else {
         switch (diff) {
@@ -108,7 +119,7 @@ export default function CourseCard({
                             tasks.map(t => {
                                 const taskDate = toDate(t.dlDue);
                                 const isOld = currDue && taskDate ? taskDate < currDue : false;
-                                const isCurr = t.deadline === currDl?.name;
+                                const isCurr = t.deadline === deadlines[slide].name;
                                 if (isCurr) hasCurr = true;
 
                                 const shouldInsert = isCurr && hasOldTasks && !isInserted;
