@@ -36,7 +36,6 @@ export default function CourseCard({
     let color;
     if (isDone) {
         color = "text-neutral-400";
-        console.log("DONE")
     }
     else {
         color = diff < 0
