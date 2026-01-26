@@ -264,31 +264,6 @@ export default function Courses() {
         });
     }, [deadlines, courses]);
 
-    useEffect(() => {
-        function toDate (dlArr) {
-            if (!Array.isArray(dlArr) || dlArr.length < 3) return null;
-            return new Date(dlArr[2], dlArr[1] - 1, dlArr[0]);
-        };
-
-        Object.entries(deadlines).forEach(([course, dls]) => {
-            const courseTasks = Array.isArray(tasks[course]) ? tasks[course] : [];
-
-            dls.forEach(dl => {
-                const currDue = toDate(dl.dlDue);
-                const tdy = new Date();
-                const diff = Math.ceil((currDue - tdy) / (1000 * 60 * 60 * 24));
-
-                const isDone = !courseTasks.some(t =>
-                    t.deadline === dl.name && !t.checked
-                );
-
-                if (diff < 0 && isDone) {
-                    deleteDeadline(dl.id);
-                }
-            })
-        })
-    }, [tasks])
-
     if (value && valid) return (
         <>
             <button
