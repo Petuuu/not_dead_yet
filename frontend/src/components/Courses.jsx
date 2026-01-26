@@ -271,12 +271,14 @@ export default function Courses() {
         };
 
         Object.entries(deadlines).forEach(([course, dls]) => {
+            const courseTasks = Array.isArray(tasks[course]) ? tasks[course] : [];
+
             dls.forEach(dl => {
                 const currDue = toDate(dl.dlDue);
                 const tdy = new Date();
                 const diff = Math.ceil((currDue - tdy) / (1000 * 60 * 60 * 24));
 
-                const isDone = !tasks[course].some(t =>
+                const isDone = !courseTasks.some(t =>
                     t.deadline === dl.name && !t.checked
                 );
 
