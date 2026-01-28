@@ -124,9 +124,9 @@ export default function EditCard({
     }, [deadlines])
 
     return (
-        <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1.5vw] pb-[1.5vw]">
-            <div className="flex items-center justify-between mr-[1vw]">
-                <h1 className="flex mx-[1vw] font-bold">
+        <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[330px] pt-[15px] pb-[15px]">
+            <div className="flex items-center justify-between mr-[max(10px,1vw)]">
+                <h1 className="flex mx-[max(10px,1vw)] font-bold">
                     <input
                         id={course.id}
                         value={localCourse.name}

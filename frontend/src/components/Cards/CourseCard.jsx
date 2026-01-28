@@ -72,10 +72,9 @@ export default function CourseCard({
     }
 
     return (
-        <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[20vw] pt-[1.5vw] pb-[1.5vw]">
-            <div className="flex items-center justify-between mr-[1vw]">
-                <h1 className="mx-[1vw] font-bold"> {course.name} ({course.credits} ECTS) </h1>
-
+        <div className="flex flex-col gap-6 bg-slate-300 rounded-md w-[330px] pt-[15px] pb-[15px]">
+            <div className="flex items-center justify-between mr-[max(10px,1vw)]">
+                <h1 className="mx-[max(10px,1vw)] font-bold"> {course.name} ({course.credits} ECTS) </h1>
                 <button onClick={() => setEdit(prev => ({ ...prev, [course.id]: true }))}>
                     <img src="/edit.png" alt="edit" className="size-[0.9vw] opacity-60" />
                 </button>
@@ -141,7 +140,7 @@ export default function CourseCard({
                                                     id={t.id}
                                                     checked={t.checked}
                                                     onChange={handleChange}
-                                                    className="peer shrink-0 size-[1.3vw] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
+                                                    className="peer shrink-0 size-[20px] appearance-none rounded-full border border-neutral-700 checked:bg-teal-500 checked:border-teal-500"
                                                 />
 
                                                 <label className={`mx-[1vw] peer-checked:line-through peer-checked:text-neutral-400 ${isOld ? "text-neutral-500" : "text-black"}`}>

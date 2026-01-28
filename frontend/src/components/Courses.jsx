@@ -291,26 +291,26 @@ export default function Courses() {
         <>
             <button
                 onClick={() => navigate("/")}
-                className="absolute top-[2vw] left-[2vw] bg-blue-500 hover:bg-blue-700 flex items-center justify-center size-[5vw] rounded-full"
+                className="absolute top-[2vw] left-[2vw] bg-blue-500 hover:bg-blue-700 flex items-center justify-center size-[max(40px,5vw)] rounded-full"
             >
                 <img src="/back.png" alt="back" className="w-[2.3vw] h-[2.5vw]" />
             </button>
 
             <button
                 onClick={createTracker}
-                className="absolute top-[2vw] right-[2vw] flex items-center justify-center pb-[0.8vw] bg-teal-500 hover:bg-teal-700 size-[5vw] text-white text-[3.5vw] font-bold rounded-full"
+                className="absolute top-[2vw] right-[2vw] flex items-center justify-center pb-[0.8vw] bg-teal-500 hover:bg-teal-700 size-[max(40px,5vw)] text-white text-[3.5vw] font-bold rounded-full"
             >
                 +
             </button>
 
             <button
                 onClick={deleteTracker}
-                className="absolute top-[8vw] right-[2vw] flex items-center justify-center bg-red-500 hover:bg-red-700 size-[5vw] text-white text-[3.5vw] font-bold rounded-full"
+                className="absolute top-[8vw] right-[2vw] flex items-center justify-center bg-red-500 hover:bg-red-700 size-[max(40px,5vw)] text-white text-[3.5vw] font-bold rounded-full"
             >
                 <img src="/x.png" alt="x" className="size-[1.7vw]" />
             </button>
 
-            <div className="grid grid-cols-4 gap-y-[4vw] items-start m-[5vw]">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(330px,1fr))] gap-x-[20px] gap-y-[30px] items-start m-[5vw]">
                 {courses.length > 0 ? (
                     courses.map(c => {
                         const dls = Array.isArray(deadlines[c.id]) ? deadlines[c.id] : [];
