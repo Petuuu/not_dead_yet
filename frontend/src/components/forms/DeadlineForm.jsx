@@ -43,6 +43,7 @@ export default function DeadlineForm({ addDeadline, courses }) {
             <input
                 type="date"
                 value={dueDate}
+                min={new Date().toISOString().split("T")[0]}
                 onChange={e => setDueDate(e.target.value)}
                 className="bg-inherit w-[10vw] mx-[0.8vw] text-stone-900 focus:outline-none"
                 required

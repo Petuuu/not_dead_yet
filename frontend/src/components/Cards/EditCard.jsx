@@ -49,6 +49,15 @@ export default function EditCard({
         alert("Credits must be non-negative")
     }
 
+    function checkDlDue(newDue) {
+        const tdy = new Date();
+        tdy.setHours(0, 0, 0, 0);
+        const newDueForm = toDate(newDue);
+
+        if (tdy <= newDueForm) return true;
+        alert("Deadline can't be set to be due in the past");
+    }
+
     async function handleSave() {
         const taskLookup = new Map(tasks.map(t => [t.id, t.todo]));
         const deadlineLookup = new Map(deadlines.map(d => [d.id, d]));
@@ -62,8 +71,12 @@ export default function EditCard({
             .map(([deadlineId, name]) => updateDlName(+deadlineId, name));
 
         const dlDueUpdates = Object.entries(localDlDue)
-            .filter(([deadlineId, due]) => Array.isArray(due) && due.join("/") !== (deadlineLookup.get(+deadlineId)?.due ?? ""))
-            .map(([deadlineId, due]) => updateDlDue(+deadlineId, due, { refresh: false }));
+            .filter(([deadlineId, due]) => (
+                Array.isArray(due)
+                    && checkDlDue(due)
+                    && due.join("/") !== (deadlineLookup.get(+deadlineId)?.due ?? "")
+            ))
+            .map(([deadlineId, due]) => updateDlDue(+deadlineId, due));
 
         if (checkCredits()) {
             courseChanged = localCourse.name !== course.name || +localCourse.credits !== course.credits;
