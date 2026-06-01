@@ -17,8 +17,11 @@ export default function Courses() {
     const [slide, setSlide] = useState({});
     const [edit, setEdit] = useState({});
     const [valid, setValid] = useState(true);
+    const [loading, setLoading] = useState(Boolean(value));
 
     async function fetchAll() {
+        setLoading(true);
+
         try {
             const res = await api.get(`/courses/${value}`);
             const coursesData = Array.isArray(res.data) ? res.data : [];
@@ -47,6 +50,9 @@ export default function Courses() {
         catch (e) {
             console.error("Error fetching courses:", e);
             setCourses([]);
+        }
+        finally {
+            setLoading(false);
         }
     };
 
@@ -216,6 +222,8 @@ export default function Courses() {
     async function getTrackers() {
         if (!value) return;
 
+        setLoading(true);
+
         try {
             await api.get(`/trackers/${value}`);
             await fetchAll();
@@ -225,6 +233,9 @@ export default function Courses() {
         catch (e) {
             console.error(`Error validating tracker ${value}:`, e);
             setValid(false);
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -287,7 +298,11 @@ export default function Courses() {
         })
     }, [tasks])
 
-    if (value && valid) return (
+    if (value && valid) return loading ? (
+        <div className="flex min-h-screen items-center justify-center text-[2vw] font-semibold">
+            Loading courses...
+        </div>
+    ) : (
         <>
             <button
                 onClick={() => navigate("/")}

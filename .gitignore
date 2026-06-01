@@ -27,6 +27,7 @@ backend/.env
 backend/__pycache__
 backend/Dockerfile
 backend/fly.toml
+backend/.ndy
 
 
 ## vscode
