@@ -197,11 +197,14 @@ export default function Courses() {
             coursesData.forEach(c => setSlide(prev => ({ ...prev, [c.id]: 0 })));
         } catch (e) {
             console.error("Error loading courses:", e);
+            alert(`Error creating tracker: server down`);
             setCourses([]);
         }
     }
 
     async function createTracker() {
+        setLoading(true);
+
         try {
             const res = await api.post("/trackers");
 
@@ -216,6 +219,10 @@ export default function Courses() {
         }
         catch (e) {
             console.error("Error creating tracker:", e);
+            alert(`Error creating tracker: server down`);
+        }
+        finally {
+            setLoading(false);
         }
     }
 
@@ -386,7 +393,11 @@ export default function Courses() {
         </>
     );
 
-    return (
+    return loading ? (
+        <div className="flex min-h-screen items-center justify-center text-[2vw] font-semibold">
+            Loading tracker...
+        </div>
+    ) : (
         <div className="flex flex-col items-center">
             {
                 !valid ? (

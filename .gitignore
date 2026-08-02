@@ -30,6 +30,7 @@ backend/fly.toml
 backend/.ndy
 
 
-## vscode
+## other
 
 .vscode
+.venv
