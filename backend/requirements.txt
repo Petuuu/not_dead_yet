@@ -2,5 +2,6 @@ uvicorn[standard]
 fastapi
 python-dotenv
 psycopg2-binary
+psycopg[binary]
 sqlalchemy
 pydantic
