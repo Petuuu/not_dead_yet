@@ -1,20 +1,36 @@
 {
   "rewrites": [
     {
+      "source": "/trackers",
+      "destination": "/api?path=trackers"
+    },
+    {
       "source": "/trackers/:path*",
-      "destination": "/api/trackers/:path*"
+      "destination": "/api?path=trackers/:path*"
+    },
+    {
+      "source": "/courses",
+      "destination": "/api?path=courses"
     },
     {
       "source": "/courses/:path*",
-      "destination": "/api/courses/:path*"
+      "destination": "/api?path=courses/:path*"
+    },
+    {
+      "source": "/deadlines",
+      "destination": "/api?path=deadlines"
     },
     {
       "source": "/deadlines/:path*",
-      "destination": "/api/deadlines/:path*"
+      "destination": "/api?path=deadlines/:path*"
+    },
+    {
+      "source": "/tasks",
+      "destination": "/api?path=tasks"
     },
     {
       "source": "/tasks/:path*",
-      "destination": "/api/tasks/:path*"
+      "destination": "/api?path=tasks/:path*"
     }
   ]
 }

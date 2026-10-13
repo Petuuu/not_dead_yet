@@ -1,10 +1,13 @@
 import axios from "axios";
 
 export default async function handler(req, res) {
-    const backendUrl = process.env.REACT_APP_API_URL;
+    const backendUrl =
+        process.env.BACKEND_URL;
 
     if (!backendUrl) {
-        return res.status(500).json({ error: "REACT_APP_API_URL is not configured" });
+        return res.status(500).json({
+            error: "BACKEND_URL is not configured",
+        });
     }
 
     const path = Array.isArray(req.query.path)
