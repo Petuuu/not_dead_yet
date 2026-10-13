@@ -1,0 +1,20 @@
+{
+  "rewrites": [
+    {
+      "source": "/trackers/:path*",
+      "destination": "/api/trackers/:path*"
+    },
+    {
+      "source": "/courses/:path*",
+      "destination": "/api/courses/:path*"
+    },
+    {
+      "source": "/deadlines/:path*",
+      "destination": "/api/deadlines/:path*"
+    },
+    {
+      "source": "/tasks/:path*",
+      "destination": "/api/tasks/:path*"
+    }
+  ]
+}
